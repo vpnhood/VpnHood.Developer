@@ -50,7 +50,9 @@ $articles = @(
         Description = "Build your own VPN app for Android, iOS, Windows and Linux from VpnHood.App.Template, on VpnHood's NuGet packages."
         Hero = "images/hero-build-your-app.svg"
         HeroAlt = "Three steps: use VpnHood.App.Template, make it yours in app.props, appsettings.json, branding and icons, and build it with dotnet for Android, iOS, Windows and Linux" }
-    [pscustomobject]@{ File = "client-architecture.md"; Title = "How a VpnHood app is built"
+    [pscustomobject]@{ File = "app-startup.md"; Title = "How a VpnHood app starts"
+        Description = "How a head starts a VpnHood app: who the app is, its options with its store's providers, and what the host builds from them on Android, iOS, Windows and Linux." }
+    [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
         Description = "A VpnHood app is a head over three layers - the UI, the app's logic and the VPN engine - which meet at two contracts; which part to use for what you build." }
 )
 
@@ -512,7 +514,7 @@ Write-Text (Join-Path $WorkDir "index.md") ($homeFront + @"
   </a></div>
   <div class="col"><a class="card h-100" href="articles/client-architecture.md">
     <div class="vh-card-visual"><img src="images/card-layers.svg" alt="The layers of a VpnHood app, top to bottom: the head you publish, its screens, its logic, the VPN engine and the networking beneath, with the app API and the VPN service contract between them"></div>
-    <div class="card-body"><h2 class="h5 card-title">How a VpnHood app is built</h2>
+    <div class="card-body"><h2 class="h5 card-title">VpnHood Client Architecture</h2>
     <p class="card-text">A head over three layers, the UI, the app's logic and the VPN engine, which meet at two contracts. Replace any layer on its own.</p></div>
   </a></div>
   <div class="col"><a class="card h-100" href="libraries/index.md#networking">
