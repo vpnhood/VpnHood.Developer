@@ -65,10 +65,9 @@ function Write-Text([string]$path, [string]$text) {
     [IO.File]::WriteAllText($path, $text, [Text.UTF8Encoding]::new($false))
 }
 
-# A package's group (categories.psd1): the group that names it, or else its category's group whose Segments hold the
-# third segment of its name (VpnHood.Net.<Segment>...)
+# A package's group (categories.psd1): its category's group whose Segment is the third segment of its name
+# (VpnHood.Net.<Segment>...), so a project stays with the projects under it
 function Get-Group([string]$name) {
-    if ($groupOfPackage.ContainsKey($name)) { return $groupOfPackage[$name] }
     $key = "$($categoryOf[$name])|$($name.Split('.')[2])"
     if ($groupOfSegment.ContainsKey($key)) { return $groupOfSegment[$key] }
     $null
@@ -191,23 +190,24 @@ $categoryOf = @{}
 foreach ($project in $projects) { $categoryOf[$project.Name] = $project.Category }
 Write-Host "$($projects.Count) packages"
 
-# --- the groups: each category's, in their order. A group names its packages (Packages) or takes the ones whose name's
-# third segment it holds (Segments); a package in none shows under its segment, with a warning, until it is given one.
+# --- the groups: each category's, in their order. A group is one project and the projects under it, those whose name's
+# third segment is its Segment, so the docs keep the projects' hierarchy (owner, 2026-11-13: "in doc hirarchy, keep
+# project hirarchy"); a package in none shows under its segment, with a warning, until it is given one.
 $groups = [Collections.Generic.List[object]]::new()
-$groupOfPackage = @{}; $groupOfSegment = @{}
+$groupOfSegment = @{}
 foreach ($category in $categories) {
     foreach ($entry in @($category.Groups)) {
         $group = [pscustomobject]$entry
         $group | Add-Member -NotePropertyMembers @{ Category = $category.Key; Slug = Get-Anchor $group.Name }
-        $groups.Add($group)
-        foreach ($name in @($group.Packages | Where-Object { $_ })) {
-            if (-not $categoryOf.ContainsKey($name)) { throw "group '$($group.Name)' names $name, which is not on the site" }
-            $groupOfPackage[$name] = $group
+        $key = "$($category.Key)|$($group.Segment)"
+        if (-not $group.Segment -or $groupOfSegment.ContainsKey($key)) {
+            throw "group '$($group.Name)' needs a Segment of its own: a group is one project and the projects under it"
         }
-        foreach ($segment in @($group.Segments | Where-Object { $_ })) { $groupOfSegment["$($category.Key)|$segment"] = $group }
+        $groups.Add($group)
+        $groupOfSegment[$key] = $group
     }
 }
-$ungrouped =@($projects | Where-Object { -not (Get-Group $_.Name) } | ForEach-Object Name)
+$ungrouped = @($projects | Where-Object { -not (Get-Group $_.Name) } | ForEach-Object Name)
 if ($ungrouped) { Write-Warning "packages in no group of categories.psd1: $($ungrouped -join ', ')" }
 
 # --- the work folder: generated parts gone, the fixed parts copied in
