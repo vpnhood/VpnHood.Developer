@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" aria-hidden="true">
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8f6ff"/><stop offset="1" stop-color="#e8e0ff"/></linearGradient>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a6dff"/><stop offset="1" stop-color="#4a25c9"/></linearGradient>
+    <linearGradient id="deep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2190"/><stop offset="1" stop-color="#1c0f45"/></linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4af0d2"/><stop offset="1" stop-color="#119e87"/></linearGradient>
+    <linearGradient id="tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f3ff"/><stop offset="1" stop-color="#d9ceff"/></linearGradient>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#c4b6ff" opacity="0.5"/></pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#2a1660" flood-opacity="0.2"/></filter>
+    <filter id="spot" x="-60%" y="-60%" width="220%" height="240%"><feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#2a1660" flood-opacity="0.22"/></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b5cff"/></marker>
+  </defs>
+  <rect x="4" y="34" width="36" height="26" rx="4" fill="url(#purple)" filter="url(#spot)"/><path d="M0 62 H44 L40 68 H4 Z" fill="#c9bcff"/>
+  <path d="M46 48 H59" fill="none" stroke="#7b5cff" stroke-width="2.6" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <rect x="63" y="26" width="46" height="44" rx="12" fill="url(#teal)" filter="url(#spot)"/>
+  <text x="86" y="52" font-size="9.5" font-weight="800" fill="#fff" text-anchor="middle">SOCKS</text>
+  <path d="M113 48 H124" fill="none" stroke="#7b5cff" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="3 4" marker-end="url(#arrow)"/>
+  <circle cx="141" cy="48" r="15" fill="#fff" stroke="#7b5cff" stroke-width="2.2" filter="url(#spot)"/>
+  <ellipse cx="141" cy="48" rx="6.5" ry="15" fill="none" stroke="#7b5cff" stroke-width="1.5"/>
+  <path d="M126 48 H156 M128.1 40.5 H153.9 M128.1 55.5 H153.9" stroke="#7b5cff" stroke-width="1.3"/>
+</svg>

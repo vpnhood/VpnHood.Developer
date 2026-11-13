@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" aria-hidden="true">
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8f6ff"/><stop offset="1" stop-color="#e8e0ff"/></linearGradient>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a6dff"/><stop offset="1" stop-color="#4a25c9"/></linearGradient>
+    <linearGradient id="deep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2190"/><stop offset="1" stop-color="#1c0f45"/></linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4af0d2"/><stop offset="1" stop-color="#119e87"/></linearGradient>
+    <linearGradient id="tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f3ff"/><stop offset="1" stop-color="#d9ceff"/></linearGradient>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#c4b6ff" opacity="0.5"/></pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#2a1660" flood-opacity="0.2"/></filter>
+    <filter id="spot" x="-60%" y="-60%" width="220%" height="240%"><feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#2a1660" flood-opacity="0.22"/></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b5cff"/></marker>
+  </defs>
+  <rect x="52" y="8" width="84" height="64" rx="9" fill="#ece6ff" stroke="#d9cfff" stroke-width="1.5"/>
+  <rect x="30" y="20" width="92" height="72" rx="10" fill="#fff" stroke="#e0d8ff" stroke-width="1.5" filter="url(#spot)"/>
+  <rect x="38" y="28" width="76" height="12" rx="4" fill="url(#teal)"/><rect x="38" y="44" width="76" height="12" rx="4" fill="url(#purple)"/>
+  <text x="76" y="37.5" font-size="9" font-weight="800" fill="#fff" text-anchor="middle">IP</text>
+  <text x="76" y="53.5" font-size="9" font-weight="800" fill="#fff" text-anchor="middle">TCP</text>
+  <rect x="38" y="62" width="70" height="4.5" rx="2.2" fill="#d6ccff"/>
+  <rect x="38" y="70" width="56" height="4.5" rx="2.2" fill="#d6ccff"/>
+  <rect x="38" y="78" width="64" height="4.5" rx="2.2" fill="#d6ccff"/>
+  <circle cx="126" cy="82" r="12" fill="url(#teal)" filter="url(#spot)"/>
+  <path d="M122.5 82 l3.2 3.2 l5.8 -6.2" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

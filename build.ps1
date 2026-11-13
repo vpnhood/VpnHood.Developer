@@ -40,14 +40,6 @@ $githubBlob = "https://github.com/vpnhood/VpnHood/blob/develop/"
 # the four big categories, with their pictures and real-world scenarios
 $categories = @((Import-PowerShellDataFile (Join-Path $PSScriptRoot "categories.psd1")).Categories | ForEach-Object { [pscustomobject]$_ })
 
-# A package's feature is the third segment of its name (VpnHood.Net.<Feature>...). This names the known ones, merges
-# neighbours and sets their order; an unknown one shows as itself, after these.
-$features = [ordered]@{
-    Proxies = "Proxies"; Packets = "Packets"; PacketTransports = "Packets"; VpnAdapters = "VPN adapters"
-    TcpStack = "TCP stack"; Quic = "QUIC"; IpLocations = "IP locations"; Api = "API"
-}
-$featureOrder = @($features.Values | Select-Object -Unique)
-
 # kept off the site (owner, 2026-11-08); it keeps its doc comments and its NuGet package
 $excluded = @("VpnHood.Net.Http3")
 
@@ -73,15 +65,27 @@ function Write-Text([string]$path, [string]$text) {
     [IO.File]::WriteAllText($path, $text, [Text.UTF8Encoding]::new($false))
 }
 
-function Get-Feature([string]$name) {
-    $segment = $name.Split(".")[2]
-    if ($features.Contains($segment)) { $features[$segment] } else { $segment }
+# A package's group (categories.psd1): the group that names it, or else its category's group whose Segments hold the
+# third segment of its name (VpnHood.Net.<Segment>...)
+function Get-Group([string]$name) {
+    if ($groupOfPackage.ContainsKey($name)) { return $groupOfPackage[$name] }
+    $key = "$($categoryOf[$name])|$($name.Split('.')[2])"
+    if ($groupOfSegment.ContainsKey($key)) { return $groupOfSegment[$key] }
+    $null
 }
 
-# [(Name, Items)] from (Feature, Item) pairs: the known features first, in their order, then the rest by name
-function Group-ByFeature($pairs) {
+# a package's group by name; one in no group shows as its name's third segment, after the groups
+function Get-Feature([string]$name) {
+    $group = Get-Group $name
+    if ($group) { $group.Name } else { $name.Split(".")[2] }
+}
+
+# [(Name, Items)] from one category's (Feature, Item) pairs: its groups first, in their order, then the rest by name. The
+# order is the category's own, as each layer has a group named Abstraction.
+function Group-ByFeature([string]$category, $pairs) {
+    $order = @($groups | Where-Object Category -eq $category | ForEach-Object Name)
     @($pairs) | Group-Object Feature |
-        Sort-Object @{ Expression = { $i = $featureOrder.IndexOf($_.Name); if ($i -lt 0) { $featureOrder.Count } else { $i } } }, Name |
+        Sort-Object @{ Expression = { $i = $order.IndexOf($_.Name); if ($i -lt 0) { $order.Count } else { $i } } }, Name |
         ForEach-Object { [pscustomobject]@{ Name = $_.Name; Items = @($_.Group | ForEach-Object Item) } }
 }
 
@@ -187,6 +191,25 @@ $categoryOf = @{}
 foreach ($project in $projects) { $categoryOf[$project.Name] = $project.Category }
 Write-Host "$($projects.Count) packages"
 
+# --- the groups: each category's, in their order. A group names its packages (Packages) or takes the ones whose name's
+# third segment it holds (Segments); a package in none shows under its segment, with a warning, until it is given one.
+$groups = [Collections.Generic.List[object]]::new()
+$groupOfPackage = @{}; $groupOfSegment = @{}
+foreach ($category in $categories) {
+    foreach ($entry in @($category.Groups)) {
+        $group = [pscustomobject]$entry
+        $group | Add-Member -NotePropertyMembers @{ Category = $category.Key; Slug = Get-Anchor $group.Name }
+        $groups.Add($group)
+        foreach ($name in @($group.Packages | Where-Object { $_ })) {
+            if (-not $categoryOf.ContainsKey($name)) { throw "group '$($group.Name)' names $name, which is not on the site" }
+            $groupOfPackage[$name] = $group
+        }
+        foreach ($segment in @($group.Segments | Where-Object { $_ })) { $groupOfSegment["$($category.Key)|$segment"] = $group }
+    }
+}
+$ungrouped =@($projects | Where-Object { -not (Get-Group $_.Name) } | ForEach-Object Name)
+if ($ungrouped) { Write-Warning "packages in no group of categories.psd1: $($ungrouped -join ', ')" }
+
 # --- the work folder: generated parts gone, the fixed parts copied in
 New-Item -ItemType Directory -Force $WorkDir | Out-Null
 $generated = @("libraries", "articles", "api", "_site", "images", "template", "index.md", "toc.yml", "docfx.json", "filterConfig.yml", "robots.txt")
@@ -277,7 +300,7 @@ foreach ($category in $categories) {
     $mine = @($blocks.Keys | Where-Object { $namespaceCategory[$_] -eq $category.Key } | Sort-Object { $_.ToLowerInvariant() })
     if (-not $mine) { continue }
     $toc.Add("- name: $($category.Title)"); $toc.Add("  items:")
-    foreach ($group in Group-ByFeature ($mine | ForEach-Object { [pscustomobject]@{ Feature = $namespaceFeature[$_]; Item = $_ } })) {
+    foreach ($group in Group-ByFeature $category.Key ($mine | ForEach-Object { [pscustomobject]@{ Feature = $namespaceFeature[$_]; Item = $_ } })) {
         $toc.Add("  - name: $($group.Name)"); $toc.Add("    items:")
         foreach ($uid in $group.Items) { foreach ($line in $blocks[$uid]) { $toc.Add("    $line") } }
     }
@@ -299,7 +322,7 @@ foreach ($name in $dependsOn.Keys) {
     }
 }
 $libraryToc = [Collections.Generic.List[string]]::new()
-$libraryToc.Add("- name: All packages"); $libraryToc.Add("  href: index.md")
+$libraryToc.Add("- name: Overview"); $libraryToc.Add("  href: index.md")
 foreach ($category in $categories) {
     $pages = @($projects | Where-Object Category -eq $category.Key)
     if (-not $pages) { continue }
@@ -311,8 +334,9 @@ foreach ($category in $categories) {
         Write-Text (Join-Path $WorkDir "libraries/$($category.Key)/$($project.Name).md") ($front + $body)
     }
     $libraryToc.Add("- name: $($category.Title)"); $libraryToc.Add("  items:")
-    foreach ($group in Group-ByFeature ($pages | ForEach-Object { [pscustomobject]@{ Feature = Get-Feature $_.Name; Item = $_.Name } })) {
-        $libraryToc.Add("  - name: $($group.Name)"); $libraryToc.Add("    items:")
+    foreach ($group in Group-ByFeature $category.Key ($pages | ForEach-Object { [pscustomobject]@{ Feature = Get-Feature $_.Name; Item = $_.Name } })) {
+        # the group's name opens its page and unfolds its packages
+        $libraryToc.Add("  - name: $($group.Name)"); $libraryToc.Add("    href: $($category.Key)/$(Get-Anchor $group.Name).md"); $libraryToc.Add("    items:")
         foreach ($name in $group.Items) { $libraryToc.Add("    - name: $name"); $libraryToc.Add("      href: $($categoryOf[$name])/$name.md") }
     }
 }
@@ -344,28 +368,78 @@ foreach ($article in $articles) {
 }
 Write-Text (Join-Path $WorkDir "articles/toc.yml") (($articleToc -join "`n") + "`n")
 
-# --- Libraries' front page: every package by category and feature, with what it does
+# --- a page for every group: what it is for, when to use it, which package to take, and its packages (owner, 2026-11-13:
+# "describe in their landing page that whats the use of this, when to use it")
+function Get-PackageRow($project) {
+    $first = ((Get-Description $project.Csproj) -split "(?<=[.!?])\s", 2)[0] -replace "\|", "\|"
+    $links = @("[$(if ($project.Readme) { 'Guide' } else { 'Overview' })]($($project.Name).md)")
+    $namespaces = @($namespacesOf[$project.Name] | Sort-Object { $_.Length })
+    if ($namespaces) { $links += "[API](xref:$(if ($namespaces -contains $project.Name) { $project.Name } else { $namespaces[0] }))" }
+    "| $($project.Name) | $first | $($links -join '&nbsp;·&nbsp;') |"
+}
+
+$groupCards = @{}
+foreach ($category in $categories) {
+    $pages = @($projects | Where-Object Category -eq $category.Key)
+    $cards = [Collections.Generic.List[string]]::new()
+    foreach ($bundle in Group-ByFeature $category.Key ($pages | ForEach-Object { [pscustomobject]@{ Feature = Get-Feature $_.Name; Item = $_ } })) {
+        $group = $groups | Where-Object { $_.Category -eq $category.Key -and $_.Name -eq $bundle.Name } | Select-Object -First 1
+        $slug = Get-Anchor $bundle.Name
+        $members = @($bundle.Items)
+        $page = [Collections.Generic.List[string]]::new()
+        # its browser title names the category too: three groups are named Abstraction
+        $page.Add((ConvertTo-FrontMatter ([ordered]@{
+            title = "$($bundle.Name) - $($category.Title)"
+            description = $(if ($group.Text) { $group.Text } else { "The $($bundle.Name) packages of VpnHood." }) })).TrimEnd())
+        $page.Add(""); $page.Add("# $($bundle.Name)"); $page.Add("")
+        if ($group.Intro) {
+            $art = if ($group.Art) { "<img class=""vh-group-image"" src=""../../$($group.Art)"" alt="""">" } else { "" }
+            $page.Add("<div class=""vh-category-hero vh-group-hero""><div class=""vh-category-text""><p class=""vh-category-intro"">$(ConvertTo-Html $group.Intro)</p></div>$art</div>")
+        }
+        # a section with a diagram, as Proxy management's of what goes through a proxy (owner, 2026-11-13: "show an image
+        # or diagram with that, which tunnels goes through proxy")
+        if ($group.Diagram) {
+            $page.Add(""); $page.Add("## $($group.Diagram.Title)"); $page.Add("")
+            $page.Add("<p class=""vh-group-diagram""><img src=""../../$($group.Diagram.Image)"" alt=""$(ConvertTo-Html $group.Diagram.ImageAlt)""></p>")
+            foreach ($line in $group.Diagram.Text) { $page.Add(""); $page.Add($line) }
+        }
+        if ($group.Use) {
+            $page.Add(""); $page.Add("## When to use it"); $page.Add("")
+            foreach ($line in $group.Use) { $page.Add("- $line") }
+        }
+        if ($group.Pick) {
+            $page.Add(""); $page.Add("## Which package to take"); $page.Add("")
+            foreach ($line in $group.Pick) { $page.Add("- $line") }
+        }
+        $page.Add(""); $page.Add($(if ($members.Count -eq 1) { "## Its package" } else { "## Its packages" })); $page.Add("")
+        $page.Add("| Package | What it does | |"); $page.Add("|---|---|---|")
+        foreach ($project in $members) { $page.Add((Get-PackageRow $project)) }
+        Write-Text (Join-Path $WorkDir "libraries/$($category.Key)/$slug.md") (Add-ApiLinks (($page -join "`n") + "`n"))
+
+        # its card on the Libraries page; an abstraction's has a dashed border, as its drawing has
+        $art = if ($group.Art) { "<img class=""vh-group-art"" src=""../$($group.Art)"" alt="""">" } else { "" }
+        $count = if ($members.Count -eq 1) { "1 package" } else { "$($members.Count) packages" }
+        $text = if ($group.Text) { "<span class=""vh-part-text"">$(ConvertTo-Html $group.Text)</span>" } else { "" }
+        $cards.Add("  <div class=""col""><a class=""vh-part vh-group$(if ($group.Abstraction) { ' vh-group-abstraction' })"" href=""$($category.Key)/$slug.md"">$art" +
+            "<span class=""vh-part-title"">$(ConvertTo-Html $bundle.Name)</span>$text<span class=""vh-group-count"">$count</span></a></div>")
+    }
+    $groupCards[$category.Key] = $cards
+}
+
+# --- Libraries' front page: a map, each category with its groups as cards; the packages are on the groups' pages, as all
+# of them on one page made a long list (owner, 2026-11-13: "removing the list here and keep title, its a long scray list")
 $catalog = [Collections.Generic.List[string]]::new()
 $catalog.Add((ConvertTo-FrontMatter ([ordered]@{
-    description = "Every VpnHood package by what it does: networking, the VPN engine, the app's logic and its UI, each on NuGet." })).TrimEnd())
+    description = "VpnHood's packages by what they do: networking, the VPN engine, the app's logic and its UI. Each group says what it is for, when to use it and which package to take." })).TrimEnd())
 $catalog.Add(""); $catalog.Add("# Libraries"); $catalog.Add("")
-$catalog.Add("Every VpnHood package, by what it does. A package's page says what it is for and how to add it, and leads to its " +
-    "API. All of them are on [NuGet](https://www.nuget.org/profiles/VpnHood).")
+$catalog.Add("Every part of VpnHood is a set of packages on [NuGet](https://www.nuget.org/profiles/VpnHood). Pick a group: its page " +
+    "says what it is for, when to use it, and which package to take.")
 foreach ($category in $categories) {
-    $rows = foreach ($project in @($projects | Where-Object Category -eq $category.Key)) {
-        $first = ((Get-Description $project.Csproj) -split "(?<=[.!?])\s", 2)[0] -replace "\|", "\|"
-        $links = @("[$(if ($project.Readme) { 'Guide' } else { 'Overview' })]($($category.Key)/$($project.Name).md)")
-        $namespaces = @($namespacesOf[$project.Name] | Sort-Object { $_.Length })
-        if ($namespaces) { $links += "[API](xref:$(if ($namespaces -contains $project.Name) { $project.Name } else { $namespaces[0] }))" }
-        [pscustomobject]@{ Feature = Get-Feature $project.Name; Item = "| $($project.Name) | $first | $($links -join ' · ') |" }
-    }
-    if (-not $rows) { continue }
-    $catalog.Add(""); $catalog.Add("## $($category.Title)"); $catalog.Add(""); $catalog.Add($category.Intro)
-    foreach ($group in Group-ByFeature $rows) {
-        $catalog.Add(""); $catalog.Add("### $($group.Name)"); $catalog.Add("")
-        $catalog.Add("| Package | What it does | |"); $catalog.Add("|---|---|---|")
-        foreach ($row in $group.Items) { $catalog.Add($row) }
-    }
+    if (-not $groupCards[$category.Key].Count) { continue }
+    $catalog.Add(""); $catalog.Add("## $($category.Title)"); $catalog.Add(""); $catalog.Add($category.Intro); $catalog.Add("")
+    $catalog.Add("<div class=""row row-cols-1 row-cols-md-2 g-3 vh-groups"">")
+    foreach ($card in $groupCards[$category.Key]) { $catalog.Add($card) }
+    $catalog.Add("</div>")
 }
 Write-Text (Join-Path $WorkDir "libraries/index.md") (($catalog -join "`n") + "`n")
 

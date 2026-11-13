@@ -213,3 +213,55 @@
   width: 100%;
   height: auto;
 }
+
+/* the Libraries page: a card for each group of packages; an abstraction's border is dashed, as its drawing is */
+.vh-groups {
+  margin-bottom: 1.5rem;
+}
+
+.vh-group-art {
+  display: block;
+  height: 4rem;
+  width: auto;
+  margin-bottom: 0.6rem;
+}
+
+.vh-group-count {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--bs-secondary-color);
+}
+
+.vh-group-abstraction {
+  border-style: dashed;
+  border-color: #b3a1ff;
+}
+
+/* a group's page: its drawing beside what it is for; on a phone, above it */
+.vh-group-image {
+  flex: 0 0 10rem;
+  width: 10rem;
+  height: auto;
+}
+
+@media (max-width: 767.98px) {
+  .vh-group-image {
+    order: -1;
+    flex-basis: auto;
+    width: 8rem;
+    margin: 0 auto;
+  }
+}
+
+/* a group page's diagram, as Proxy management's of what goes through a proxy: no wider than it needs */
+.vh-group-diagram {
+  margin: 0.5rem 0 1.25rem;
+}
+
+.vh-group-diagram img {
+  display: block;
+  width: 100%;
+  max-width: 34rem;
+  height: auto;
+}
