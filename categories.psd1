@@ -1,11 +1,14 @@
-# The site's four big categories, one per source folder of VpnHood, in its order: what each is for, its picture (Image,
-# a file of images/; a category without one shows its text alone), and the real-world things a developer builds with it.
-# build.ps1 groups the packages and the API by them, and the API reference's front page shows them. A scenario names the
-# packages it uses; each must be on the site.
+# The site's four big categories, one per source folder of VpnHood, in its order: what each is for, its small drawing
+# for the home page's card (Art), its picture for the API reference's front page (Image; a category without one shows its
+# text alone), both files of images/, and the real-world things a developer builds with it.
+# build.ps1 groups the packages and the API by them; the home page and the API reference's front page show them. A
+# scenario names the packages it uses; each must be on the site.
 @{
     Categories = @(
         @{
-            Key = 'net'; Folder = 'Net'; Title = 'Networking'
+            Key = 'net'; Folder = 'Net'; Title = 'Networking'; Image = 'images/category-networking.svg'
+            Art = 'images/part-networking.svg'
+            ImageAlt = 'A device''s IP packets go into a TUN adapter, and the TCP stack hands your code streams'
             Intro = 'Standalone .NET libraries for the network layer a VPN is built on. None of them needs a VPN: each one works in any .NET application.'
             Scenarios = @(
                 @{ Title = 'Capture a device''s traffic'
@@ -26,7 +29,9 @@
             )
         }
         @{
-            Key = 'core'; Folder = 'Core'; Title = 'VPN Core'
+            Key = 'core'; Folder = 'Core'; Title = 'VPN Core'; Image = 'images/category-core.svg'
+            Art = 'images/part-core.svg'
+            ImageAlt = 'A client, the encrypted tunnel to the server whose access manager admits it, and traffic split off around the tunnel'
             Intro = 'The VPN itself: the client and server engines, the tunnel between them, and the parts that decide where traffic goes and who may connect.'
             Scenarios = @(
                 @{ Title = 'Run your own VPN server'
@@ -47,7 +52,9 @@
             )
         }
         @{
-            Key = 'applib'; Folder = 'AppLib'; Title = 'App Logic'
+            Key = 'applib'; Folder = 'AppLib'; Title = 'App Logic'; Image = 'images/category-applib.svg'
+            Art = 'images/part-applib.svg'
+            ImageAlt = 'The app''s core, with its access keys, billing, updates, ads, accounts and settings around it'
             Intro = 'Everything a VPN app does below its screens, the same on every platform. Your app adds the screens and a head for each platform, as the template does.'
             Scenarios = @(
                 @{ Title = 'A VPN app without its screens'
@@ -71,7 +78,9 @@
             )
         }
         @{
-            Key = 'appui'; Folder = 'AppUi'; Title = 'App UI'
+            Key = 'appui'; Folder = 'AppUi'; Title = 'App UI'; Image = 'images/category-appui.svg'
+            Art = 'images/part-appui.svg'
+            ImageAlt = 'The same app UI on a phone, a desktop and in a browser'
             Intro = 'The app''s screens and the hosts that run them, from a phone to a desktop service.'
             Scenarios = @(
                 @{ Title = 'Use the ready UI'

@@ -51,15 +51,22 @@ $featureOrder = @($features.Values | Select-Object -Unique)
 # kept off the site (owner, 2026-11-08); it keeps its doc comments and its NuGet package
 $excluded = @("VpnHood.Net.Http3")
 
-# the hand-written pages, in reading order: files of docs/, never a glob
+# the hand-written pages, in reading order: files of docs/, never a glob. A page's Hero is a picture of images/ that the
+# site shows under its title; the page on GitHub goes without it, so VpnHood keeps no pictures for the site.
 $articles = @(
     [pscustomobject]@{ File = "build-your-app.md"; Title = "Build your VPN app"
-        Description = "Build your own VPN app for Android, iOS, Windows and Linux from VpnHood.App.Template, on VpnHood's NuGet packages." }
+        Description = "Build your own VPN app for Android, iOS, Windows and Linux from VpnHood.App.Template, on VpnHood's NuGet packages."
+        Hero = "images/hero-build-your-app.svg"
+        HeroAlt = "Three steps: use VpnHood.App.Template, make it yours in app.props, appsettings.json, branding and icons, and build it with dotnet for Android, iOS, Windows and Linux" }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "How a VpnHood app is built"
         Description = "A VpnHood app is a head over three layers - the UI, the app's logic and the VPN engine - which meet at two contracts; which part to use for what you build." }
 )
 
 function Read-Text([string]$path) { [IO.File]::ReadAllText($path).TrimStart([char]0xFEFF) }
+
+function Get-Anchor([string]$title) { ($title.ToLowerInvariant() -replace "[^a-z0-9]+", "-").Trim("-") }
+
+function ConvertTo-Html([string]$text) { [Net.WebUtility]::HtmlEncode($text) }
 
 function Write-Text([string]$path, [string]$text) {
     New-Item -ItemType Directory -Force (Split-Path $path) | Out-Null
@@ -326,6 +333,12 @@ foreach ($article in $articles) {
         "]($githubBlob$path$anchor)"
     })
     $text = Add-ApiLinks $text
+    if ($article.Hero) {
+        $heading = [regex]::new('(?m)^# [^\r\n]*')
+        if (-not $heading.IsMatch($text)) { throw "docs/$($article.File) has no title for its picture to go under" }
+        $hero = "<p class=""vh-article-hero""><img src=""../$($article.Hero)"" alt=""$(ConvertTo-Html $article.HeroAlt)""></p>"
+        $text = $heading.Replace($text, { param($match) "$($match.Value)`n`n$hero`n" }, 1)
+    }
     Write-Text (Join-Path $WorkDir "articles/$($article.File)") ((ConvertTo-FrontMatter ([ordered]@{ description = $article.Description })) + $text)
     $articleToc.Add("- name: $($article.Title)"); $articleToc.Add("  href: $($article.File)")
 }
@@ -356,26 +369,26 @@ foreach ($category in $categories) {
 }
 Write-Text (Join-Path $WorkDir "libraries/index.md") (($catalog -join "`n") + "`n")
 
-# --- the API reference's front page: each big category with its picture if it has one, what it is for, and
-# real-world scenarios that lead to their packages. Its HTML blocks have no blank line inside, which would end them.
+# --- the API reference's front page: each big category with what it is for and its picture if it has one, then
+# real-world scenarios that lead to their packages. The picture sits beside the text at a fixed width: at the column's
+# full width it was too big, at a third of it too small to read. Its HTML blocks have no blank line inside, which would
+# end them.
 $apiFront = [Collections.Generic.List[string]]::new()
 $apiFront.Add((ConvertTo-FrontMatter ([ordered]@{
     description = "The API reference of VpnHood's .NET packages: networking, the VPN engine, the app's logic and its UI, with what you can build with each." })).TrimEnd())
 $apiFront.Add(""); $apiFront.Add("# API reference"); $apiFront.Add("")
 $apiFront.Add("Every public type and member of the VpnHood packages, from the doc comments that IntelliSense shows too. Search for " +
     "a type at the top of the page, or browse the menu. Below is what each part of VpnHood is for.")
-$index = 0
 foreach ($category in $categories) {
-    $anchor = ($category.Title.ToLowerInvariant() -replace "[^a-z0-9]+", "-").Trim("-")
-    $imageOrder = if ($index++ % 2) { " order-md-2" } else { "" }
+    $anchor = Get-Anchor $category.Title
     $html = [Collections.Generic.List[string]]::new()
     $html.Add("<section class=""vh-category"" id=""$anchor"">")
-    $html.Add("  <div class=""vh-category-hero row align-items-center g-4"">")
-    if ($category.Image) {
-        $html.Add("    <div class=""col-md-4$imageOrder""><img class=""vh-category-image"" src=""../$($category.Image)"" alt=""$([Net.WebUtility]::HtmlEncode($category.Title))""></div>")
-    }
-    $html.Add("    <div class=""$(if ($category.Image) { 'col-md-8' } else { 'col' })""><h2>$([Net.WebUtility]::HtmlEncode($category.Title))</h2><p class=""lead"">$([Net.WebUtility]::HtmlEncode($category.Intro))</p>")
+    $html.Add("  <div class=""vh-category-hero"">")
+    $html.Add("    <div class=""vh-category-text""><h2>$(ConvertTo-Html $category.Title)</h2><p class=""vh-category-intro"">$(ConvertTo-Html $category.Intro)</p>")
     $html.Add("    <p><a href=""../libraries/index.md#$anchor"">Its packages</a></p></div>")
+    if ($category.Image) {
+        $html.Add("    <img class=""vh-category-image"" src=""../$($category.Image)"" alt=""$(ConvertTo-Html $category.ImageAlt)"">")
+    }
     $html.Add("  </div>")
     $html.Add("  <div class=""row row-cols-1 row-cols-md-2 g-3 vh-scenarios"">")
     foreach ($scenario in $category.Scenarios) {
@@ -399,6 +412,15 @@ $example = [regex]::Match((Read-Text (Join-Path $src "Net/VpnHood.Net.VpnAdapter
 if (-not $example.Success) { throw "VpnHood.Net.VpnAdapters.WinTun's README has no VpnAdapterWinTun example" }
 $code = [Net.WebUtility]::HtmlEncode((($example.Groups[1].Value -split "\r?\n") |
     Where-Object { $_.Trim() -and $_ -notmatch "^\s*//" } | ForEach-Object { $_ -replace "\s+//\s.*$", "" }) -join "`n")
+# the four parts of VpnHood, each a small card - its small drawing, its name and the first sentence of what it is for -
+# that leads to its section of the API reference's front page, where its picture is: four big pictures made the home
+# page too heavy. The drawing is decorative, as the card names its part.
+$parts = foreach ($category in $categories) {
+    $first = ($category.Intro -split "(?<=[.!?])\s", 2)[0]
+    "  <div class=""col""><a class=""vh-part"" href=""api/index.md#$(Get-Anchor $category.Title)"">" +
+        "<img class=""vh-part-art"" src=""$($category.Art)"" alt="""">" +
+        "<span class=""vh-part-title"">$(ConvertTo-Html $category.Title)</span><span class=""vh-part-text"">$(ConvertTo-Html $first)</span></a></div>"
+}
 $homeFront = ConvertTo-FrontMatter ([ordered]@{ _layout = "landing"; title = "VpnHood for developers"
     description = "Build your own VPN app for Android, iOS, Windows and Linux, or use VpnHood's open-source .NET packages in yours: guides, a page for every package, and the API reference." })
 Write-Text (Join-Path $WorkDir "index.md") ($homeFront + @"
@@ -410,12 +432,12 @@ Write-Text (Join-Path $WorkDir "index.md") ($homeFront + @"
 
 <div class="row row-cols-1 row-cols-md-3 g-4 vh-cards">
   <div class="col"><a class="card h-100" href="articles/build-your-app.md">
-    <div class="vh-card-visual"><img src="images/app-phone.webp" alt="VpnHood! CONNECT on two phones: connected, and its list of servers"></div>
+    <div class="vh-card-visual"><img src="images/card-your-app.svg" alt="An app made from the template under a brand of its own: its connect screen, connected, and its list of locations"></div>
     <div class="card-body"><h2 class="h5 card-title">Build your VPN app</h2>
     <p class="card-text">Start from the template: a repository that holds only your app, for Android, iOS, Windows and Linux. A Debug build connects to our sample server.</p></div>
   </a></div>
   <div class="col"><a class="card h-100" href="articles/client-architecture.md">
-    <div class="vh-card-visual"><img src="images/layers.svg" alt="The layers of a VpnHood app: the head, the UI, the app's logic, the VPN engine and the networking libraries"></div>
+    <div class="vh-card-visual"><img src="images/card-layers.svg" alt="The layers of a VpnHood app, top to bottom: the head you publish, its screens, its logic, the VPN engine and the networking beneath, with the app API and the VPN service contract between them"></div>
     <div class="card-body"><h2 class="h5 card-title">How a VpnHood app is built</h2>
     <p class="card-text">A head over three layers, the UI, the app's logic and the VPN engine, which meet at two contracts. Replace any layer on its own.</p></div>
   </a></div>
@@ -424,6 +446,15 @@ Write-Text (Join-Path $WorkDir "index.md") ($homeFront + @"
     <div class="card-body"><h2 class="h5 card-title">Use the networking libraries</h2>
     <p class="card-text">Open a TUN adapter and handle its packets in a few lines; the Linux, Android and iOS adapters take the same calls. IP packets, a user-space TCP stack, QUIC and proxies too, for any .NET application.</p></div>
   </a></div>
+</div>
+
+## Use any part of VpnHood
+
+Four layers of NuGet packages, from networking libraries that need no VPN to the screens of a finished app. Each part's
+page says what you can build with it.
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3 vh-parts">
+$($parts -join "`n")
 </div>
 
 <p class="vh-explore">Looking for a type? Search at the top of the page, or open the <a href="api/index.md">API reference</a>. The source is on <a href="https://github.com/vpnhood/VpnHood">GitHub</a>, and every package is on <a href="https://www.nuget.org/profiles/VpnHood">NuGet</a>.</p>

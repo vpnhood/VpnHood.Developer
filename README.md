@@ -11,7 +11,9 @@ written, in [VpnHood](https://github.com/vpnhood/VpnHood), so nothing is written
   its build on a missing comment, plus VpnHood.Net.Proxies from its own repo.
 
 `categories.psd1` holds the four big categories (Networking, VPN Core, App Logic, App UI): what each is for, its
-picture, and the real-world scenarios the API reference's front page shows.
+picture, and its real-world scenarios. The home page shows each as a card, and the API reference's front page as a
+section with its scenarios. `images/` holds the site's pictures; a picture of an app made from the template shows a
+made-up brand, never one of VpnHood's own apps.
 
 ## When it builds
 

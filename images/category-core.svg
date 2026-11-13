@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 300" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" role="img" aria-label="A client, the encrypted tunnel to the server whose access manager admits it, and traffic split off around the tunnel">
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8f6ff"/><stop offset="1" stop-color="#e8e0ff"/></linearGradient>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a6dff"/><stop offset="1" stop-color="#4a25c9"/></linearGradient>
+    <linearGradient id="deep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2190"/><stop offset="1" stop-color="#1c0f45"/></linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4af0d2"/><stop offset="1" stop-color="#119e87"/></linearGradient>
+    <linearGradient id="tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f3ff"/><stop offset="1" stop-color="#d9ceff"/></linearGradient>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#c4b6ff" opacity="0.5"/></pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#2a1660" flood-opacity="0.2"/></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b5cff"/></marker>
+  </defs>
+  <rect x="2" y="2" width="616" height="296" rx="24" fill="url(#backdrop)"/>
+  <rect x="2" y="2" width="616" height="296" rx="24" fill="url(#dots)"/>
+  <rect x="34" y="62" width="82" height="152" rx="16" fill="url(#deep)" filter="url(#shadow)"/>
+  <rect x="41" y="74" width="68" height="128" rx="8" fill="#2b1870"/>
+  <circle cx="75" cy="122" r="20" fill="none" stroke="url(#teal)" stroke-width="6"/>
+  <path d="M68.9 122 l5.76 5.76 l10.44 -11.16" fill="none" stroke="#4af0d2" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="55" y="160" width="40" height="8" rx="4" fill="#8a6dff"/><rect x="55" y="176" width="28" height="8" rx="4" fill="#c9bcff"/>
+  <text x="75" y="246" font-size="19" font-weight="600" fill="#1f1640" text-anchor="middle">client</text>
+  <rect x="130" y="106" width="300" height="68" rx="34" fill="url(#tube)" stroke="#b3a1ff" stroke-width="2" filter="url(#shadow)"/>
+  <path d="M152 140 H408" fill="none" stroke="#7b5cff" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="9 8" marker-end="url(#arrow)"/>
+  <rect x="172" y="131" width="30" height="18" rx="9" fill="url(#teal)"/>
+  <rect x="220" y="131" width="30" height="18" rx="9" fill="url(#purple)"/>
+  <rect x="330" y="131" width="30" height="18" rx="9" fill="url(#purple)"/>
+  <rect x="376" y="131" width="30" height="18" rx="9" fill="url(#teal)"/>
+  <circle cx="280" cy="140" r="30" fill="url(#teal)" filter="url(#shadow)"/>
+  <path d="M269 137 v-7 a11 11 0 0 1 22 0 v7" fill="none" stroke="#fff" stroke-width="4"/>
+  <rect x="264" y="135" width="32" height="22" rx="4" fill="#fff"/><circle cx="280" cy="146" r="3.4" fill="#119e87"/>
+  <text x="280" y="204" font-size="17" font-weight="600" fill="#5d5584" text-anchor="middle">encrypted tunnel</text>
+  <rect x="448" y="84" width="112" height="32" rx="9" fill="url(#purple)" filter="url(#shadow)"/>
+  <circle cx="466" cy="100" r="4.5" fill="#4af0d2"/><rect x="480" y="97" width="62" height="6" rx="3" fill="#c9bcff"/>
+  <rect x="448" y="124" width="112" height="32" rx="9" fill="url(#purple)" filter="url(#shadow)"/>
+  <circle cx="466" cy="140" r="4.5" fill="#4af0d2"/><rect x="480" y="137" width="62" height="6" rx="3" fill="#c9bcff"/>
+  <rect x="448" y="164" width="112" height="32" rx="9" fill="url(#purple)" filter="url(#shadow)"/>
+  <circle cx="466" cy="180" r="4.5" fill="#4af0d2"/><rect x="480" y="177" width="62" height="6" rx="3" fill="#c9bcff"/>
+  <path d="M560 52 l24 9 v15 c0 15 -11 24 -24 29 c-13 -5 -24 -14 -24 -29 v-15 z" fill="url(#teal)" stroke="#fff" stroke-width="3" filter="url(#shadow)"/>
+  <path d="M552.9 80 l5.76 5.76 l10.44 -11.16" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="504" y="246" font-size="19" font-weight="600" fill="#1f1640" text-anchor="middle">server</text>
+  <path d="M140 176 C 150 236, 196 258, 248 258" fill="none" stroke="#7b5cff" stroke-width="3" stroke-linecap="round" stroke-dasharray="3 7" marker-end="url(#arrow)"/>
+  <circle cx="270" cy="258" r="15" fill="#fff" stroke="#7b5cff" stroke-width="2.6"/>
+  <ellipse cx="270" cy="258" rx="6.5" ry="15" fill="none" stroke="#7b5cff" stroke-width="2"/><path d="M255 258 H285" stroke="#7b5cff" stroke-width="2"/>
+  <text x="294" y="264" font-size="17" font-weight="600" fill="#5d5584" text-anchor="start">split tunnel</text>
+</svg>
