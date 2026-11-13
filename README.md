@@ -1,0 +1,41 @@
+# developer.vpnhood.com
+
+The source of [developer.vpnhood.com](https://developer.vpnhood.com): its look, its pictures, and the script that
+builds it with [DocFX](https://dotnet.github.io/docfx/). The text is not here: each part is read from where it is
+written, in [VpnHood](https://github.com/vpnhood/VpnHood), so nothing is written twice.
+
+- **Start here:** the pages `build.ps1` lists in `$articles`, from VpnHood's `docs/`. Only those: the rest of `docs/`
+  is maintainers' notes, not product documentation.
+- **Libraries:** each package's `README.md`, or, for a package without one, a page made from its project.
+- **API reference:** the doc comments of every package whose project sets `VhApiDocsComplete`, the gate that fails
+  its build on a missing comment, plus VpnHood.Net.Proxies from its own repo.
+
+`categories.psd1` holds the four big categories (Networking, VPN Core, App Logic, App UI): what each is for, its
+picture, and the real-world scenarios the API reference's front page shows.
+
+## When it builds
+
+`.github/workflows/build.yml` builds the site from VpnHood's `develop`:
+
+- on every push to this repo's `main`;
+- after every release: VpnHood's release scripts (`pub/*/PublishByGithub.ps1`) start it with the releaser's own
+  GitHub login once the release has bumped VpnHood's version, so VpnHood holds no credential for this repo;
+- by hand, from the Actions tab, for any branch, tag or commit of VpnHood.
+
+Each run keeps the built site as its artifact; nothing publishes it yet.
+
+## Build it locally
+
+Next to clones of [VpnHood](https://github.com/vpnhood/VpnHood) and
+[VpnHood.Net.Proxies](https://github.com/vpnhood/VpnHood.Net.Proxies), with the workloads the packages need
+(`android`, `ios`, `tvos`, `maui-android`, `maui-windows`):
+
+```powershell
+pwsh ./build.ps1 -WorkDir $env:TEMP/vh-developer-site
+dotnet docfx serve $env:TEMP/vh-developer-site/_site
+```
+
+`-SkipMetadata` keeps the last run's API metadata, which is the slow part, when only pages changed.
+
+`template/layout/_master.tmpl` is DocFX's own layout with a canonical link added: compare it with the new DocFX's
+`templates/modern/layout/_master.tmpl` when `.config/dotnet-tools.json` moves to another version.

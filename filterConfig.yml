@@ -1,0 +1,9 @@
+# Types the build generates rather than anyone writing them: the Windows VPN plug-in's C#/WinRT interop. They are
+# public to the runtime, not to a developer, so the API reference leaves them out.
+apiRules:
+- exclude:
+    uidRegex: ^ABI\.
+    type: Namespace
+- exclude:
+    uidRegex: ^WinRT$
+    type: Namespace

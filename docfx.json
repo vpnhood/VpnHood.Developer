@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [],
+  "build": {
+    "content": [
+      { "files": [ "api/**.yml" ] },
+      { "files": [ "index.md", "toc.yml", "articles/**.md", "articles/toc.yml", "libraries/**.md", "libraries/toc.yml", "api/index.md" ] }
+    ],
+    "resource": [
+      { "files": [ "images/**", "robots.txt" ] }
+    ],
+    "output": "_site",
+    "template": [ "default", "modern", "template" ],
+    "xref": [ "https://learn.microsoft.com/en-us/dotnet/.xrefmap.json" ],
+    "sitemap": { "baseUrl": "", "changefreq": "weekly" },
+    "globalMetadata": {
+      "_appName": "VpnHood! Developer",
+      "_appTitle": "VpnHood! Developer",
+      "_appLogoPath": "images/logo.png",
+      "_appFaviconPath": "images/logo.png",
+      "_appFooter": "<span>© OmegaHood LLC · <a href=\"https://github.com/vpnhood/VpnHood\">VpnHood on GitHub</a> · <a href=\"https://www.vpnhood.com\">www.vpnhood.com</a></span>",
+      "_lang": "en",
+      "_enableSearch": true,
+      "_disableContribution": true,
+      "_canonicalBase": ""
+    }
+  }
+}

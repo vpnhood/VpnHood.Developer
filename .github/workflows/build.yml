@@ -1,0 +1,65 @@
+name: Build
+
+# Builds developer.vpnhood.com from VpnHood's develop with build.ps1 (README.md explains it): on a push here, after a
+# release, when VpnHood's release scripts (pub/*/PublishByGithub.ps1) start it, and by hand from the Actions tab.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      vpnhood_ref:
+        description: "The branch, tag or commit of VpnHood to build from"
+        required: false
+        default: develop
+
+permissions:
+  contents: read
+
+# a newer build makes an older one pointless
+concurrency:
+  group: site
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # The API metadata compiles every documented package for each of its targets, as VpnHood's publish_nugets.yml packs
+    # them: Windows builds the net*-windows ones, and the workloads Android, iOS and tvOS.
+    runs-on: windows-latest
+    env:
+      DOTNET_NOLOGO: "1"
+      DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+    steps:
+      # side by side, as build.ps1 expects them: this repo, VpnHood and VpnHood.Net.Proxies
+      - uses: actions/checkout@v7
+        with: { path: site }
+      - uses: actions/checkout@v7
+        with:
+          repository: vpnhood/VpnHood
+          ref: ${{ inputs.vpnhood_ref || 'develop' }}
+          path: VpnHood
+      # The look's package (VpnHood.AppUi.Assets.Classic) is a submodule that the UI hosts reference.
+      - name: Check out VpnHood's asset submodule
+        working-directory: VpnHood
+        run: git submodule update --init --depth 1 src/AppUi/VpnHood.AppUi.Assets.Classic
+      - uses: actions/checkout@v7
+        with:
+          repository: vpnhood/VpnHood.Net.Proxies
+          path: VpnHood.Net.Proxies
+      # The SDK VpnHood's global.json names, by its version: setup-dotnet reads that file's rollForward latestMajor as the
+      # LTS channel and would install .NET 10 instead.
+      - name: Read the SDK version VpnHood's global.json names
+        id: sdk
+        shell: pwsh
+        run: '"version=$((Get-Content VpnHood/global.json -Raw | ConvertFrom-Json).sdk.version)" >> $env:GITHUB_OUTPUT'
+      - uses: actions/setup-dotnet@v6
+        with: { dotnet-version: "${{ steps.sdk.outputs.version }}" }
+      - name: Install .NET workloads (android, ios, tvos, maui)
+        shell: pwsh
+        run: dotnet workload install android ios tvos maui-android maui-windows
+      - name: Build the site
+        shell: pwsh
+        run: ./site/build.ps1 -WorkDir "${{ runner.temp }}/site"
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ${{ runner.temp }}/site/_site
