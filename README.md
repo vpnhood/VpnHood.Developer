@@ -42,3 +42,18 @@ dotnet docfx serve $env:TEMP/vh-developer-site/_site
 
 `template/layout/_master.tmpl` is DocFX's own layout with a canonical link added: compare it with the new DocFX's
 `templates/modern/layout/_master.tmpl` when `.config/dotnet-tools.json` moves to another version.
+
+## Forge hero artwork
+
+The selected master is `developer-forge-banner-refined-hands.png`; it and its generation prompt are kept outside this repository.
+Run `python tools/export-forge-hero.py PATH_TO_MASTER.png` (Pillow required) to export the desktop
+and mobile WebP images used by the home page. Keep the master unchanged; the exporter only resizes
+and compresses it.
+
+## Casting article artwork
+
+The Build your VPN app guide shows a separate casting scene below its title, followed by the existing step
+illustrations. The master, `build-your-app-casting-soft-forearms.png`, and its generation prompt are kept outside this repository.
+Run `python tools/export-casting-hero.py PATH_TO_MASTER.png` (Pillow required) to export the desktop and small WebP
+images. Keep the master unchanged; the exporter only resizes and compresses it. The page shows the complete scene
+at every width so both workers, the pour, and the mold stay visible.

@@ -49,6 +49,10 @@ $excluded = @("VpnHood.Net.Http3")
 $articles = @(
     [pscustomobject]@{ File = "build-your-app.md"; Title = "Build your VPN app"
         Description = "Build your own VPN app for Android, iOS, Windows and Linux from VpnHood.App.Template, on VpnHood's NuGet packages."
+        Hero = "images/hero-casting.webp"
+        HeroSmall = "images/hero-casting-small.webp"
+        HeroWidth = 2160; HeroHeight = 720
+        HeroAlt = "A hooded woman and a craftsman pour glowing metal into a mold in a stone workshop"
         Steps = @(
             @{ Art = "images/step-template.svg"; Alt = "Use this template, on VpnHood.App.Template's GitHub page, makes a repository of your own" }
             @{ Art = "images/step-yours.svg"; Alt = "Your repository's app folder: app.props, appsettings.json, branding and icons" }
@@ -365,7 +369,9 @@ foreach ($article in $articles) {
     if ($article.Hero) {
         $heading = [regex]::new('(?m)^# [^\r\n]*')
         if (-not $heading.IsMatch($text)) { throw "docs/$($article.File) has no title for its picture to go under" }
-        $hero = "<p class=""vh-article-hero""><img src=""../$($article.Hero)"" alt=""$(ConvertTo-Html $article.HeroAlt)""></p>"
+        $source = if ($article.HeroSmall) { "<source media=""(max-width: 767.98px)"" srcset=""../$($article.HeroSmall)"">" } else { "" }
+        $dimensions = if ($article.HeroWidth -and $article.HeroHeight) { " width=""$($article.HeroWidth)"" height=""$($article.HeroHeight)""" } else { "" }
+        $hero = "<p class=""vh-article-hero""><picture>$source<img src=""../$($article.Hero)""$dimensions fetchpriority=""high"" decoding=""async"" alt=""$(ConvertTo-Html $article.HeroAlt)""></picture></p>"
         $text = $heading.Replace($text, { param($match) "$($match.Value)`n`n$hero`n" }, 1)
     }
     # the page's steps: its first numbered list, each item with its picture and its bold lead as the step's title
@@ -526,9 +532,15 @@ $homeFront = ConvertTo-FrontMatter ([ordered]@{ _layout = "landing"; title = "Vp
     description = "Build your own VPN app for Android, iOS, Windows and Linux, or use VpnHood's open-source .NET packages in yours: guides, a page for every package, and the API reference." })
 Write-Text (Join-Path $WorkDir "index.md") ($homeFront + @"
 <div class="vh-hero">
-  <h1>Build your own VPN app</h1>
-  <p>Or use VpnHood's parts in any .NET application. It is open source, and every part is a NuGet package.</p>
-  <p class="vh-hero-actions"><a class="btn btn-light btn-lg" href="articles/build-your-app.md">Build your VPN app</a> <a class="btn btn-outline-light btn-lg" href="libraries/index.md">Browse the libraries</a></p>
+  <picture class="vh-hero-art">
+    <source media="(max-width: 991.98px)" srcset="images/hero-forge-small.webp">
+    <img src="images/hero-forge.webp" width="2160" height="720" fetchpriority="high" decoding="async" alt="A hooded woman holds hot iron with tongs while a craftsman forges it beside a furnace built into the stone wall.">
+  </picture>
+  <div class="vh-hero-content">
+    <h1>Build your own VPN app</h1>
+    <p>Or use VpnHood's parts in any .NET application. It is open source, and every part is a NuGet package.</p>
+    <p class="vh-hero-actions"><a class="btn btn-light btn-lg" href="articles/build-your-app.md">Build your VPN app</a> <a class="btn btn-outline-light btn-lg" href="libraries/index.md">Browse the libraries</a></p>
+  </div>
 </div>
 
 <div class="row row-cols-1 row-cols-md-3 g-4 vh-cards">
