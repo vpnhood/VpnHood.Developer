@@ -24,7 +24,8 @@ made-up brand, never one of VpnHood's own apps.
   GitHub login once the release has bumped VpnHood's version, so VpnHood holds no credential for this repo;
 - by hand, from the Actions tab, for any branch, tag or commit of VpnHood.
 
-Each run keeps the built site as its artifact; nothing publishes it yet.
+Each run publishes the site to GitHub Pages, at developer.vpnhood.com: the domain is this repo's Pages setting, and
+its DNS a CNAME to `vpnhood.github.io` at Cloudflare, proxied as www.vpnhood.com's is.
 
 ## Build it locally
 
