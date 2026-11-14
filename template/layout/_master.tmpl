@@ -89,6 +89,21 @@
       {{/_disableNavbar}}
     </header>
 
+    {{#vhHeroImage}}
+    <!-- the page's banner, the window's whole width and alike on every page that has one: build.ps1's Add-Hero gives its keys -->
+    <section class="vh-hero" style="--vh-hero-art-width: {{vhHeroArtWidth}}; --vh-hero-position: {{vhHeroPosition}}; --vh-hero-clear: {{vhHeroClear}}; --vh-hero-ratio: {{vhHeroRatio}}; --vh-hero-focus: {{vhHeroFocus}}">
+      <picture class="vh-hero-art">
+        {{#vhHeroSmall}}<source media="(max-width: 991.98px)" srcset="{{_rel}}{{vhHeroSmall}}">{{/vhHeroSmall}}
+        <img src="{{_rel}}{{vhHeroImage}}" width="{{vhHeroWidth}}" height="{{vhHeroHeight}}" fetchpriority="high" decoding="async" alt="{{vhHeroAlt}}">
+      </picture>
+      <div class="vh-hero-content">
+        <h1>{{vhHeroHeading}}</h1>
+        {{#vhHeroLead}}<p>{{vhHeroLead}}</p>{{/vhHeroLead}}
+        {{#vhHeroActions}}<p class="vh-hero-actions">{{{vhHeroActions}}}</p>{{/vhHeroActions}}
+      </div>
+    </section>
+    {{/vhHeroImage}}
+
     <main class="container-xxl">
       {{^_disableToc}}
       <div class="toc-offcanvas">

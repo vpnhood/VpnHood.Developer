@@ -44,15 +44,17 @@ $categories = @((Import-PowerShellDataFile (Join-Path $PSScriptRoot "categories.
 $excluded = @("VpnHood.Net.Http3")
 
 # the hand-written pages, in reading order: files of docs/, never a glob. A page's Hero is a picture of images/ that the
-# site shows under its title; its Steps are a picture for each item of its first numbered list, which the site shows as
-# steps. The page on GitHub goes without them, so VpnHood keeps no pictures for the site.
+# site shows in the page's banner with its title, as the home page shows the forge; its Steps are a picture for each item
+# of its first numbered list, which the site shows as steps. The page on GitHub goes without them, so VpnHood keeps no
+# pictures for the site.
 $articles = @(
     [pscustomobject]@{ File = "build-your-app.md"; Title = "Build your VPN app"
         Description = "Build your own VPN app for Android, iOS, Windows and Linux from VpnHood.App.Template, on VpnHood's NuGet packages."
-        Hero = "images/hero-casting.webp"
-        HeroSmall = "images/hero-casting-small.webp"
-        HeroWidth = 2160; HeroHeight = 720
-        HeroAlt = "A hooded woman and a craftsman pour glowing metal into a mold in a stone workshop"
+        # the complete scene at every width, so both workers, the pour and the mold stay in sight; its furnace is a tenth
+        # of its width from its left edge
+        Hero = @{ Image = "images/hero-casting.webp"; Small = "images/hero-casting-small.webp"; Width = 2160; Height = 720
+            Alt = "A hooded woman and a craftsman pour glowing metal into a mold in a stone workshop"; Ratio = "3 / 1"; Focus = "center"
+            Clear = "0.1" }
         Steps = @(
             @{ Art = "images/step-template.svg"; Alt = "Use this template, on VpnHood.App.Template's GitHub page, makes a repository of your own" }
             @{ Art = "images/step-yours.svg"; Alt = "Your repository's app folder: app.props, appsettings.json, branding and icons" }
@@ -61,6 +63,8 @@ $articles = @(
         Description = "How a head starts a VpnHood app: who the app is, its options with its store's providers, and what the host builds from them on Android, iOS, Windows and Linux." }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
         Description = "A VpnHood app is a head over three layers - the UI, the app's logic and the VPN engine - which meet at two contracts; which part to use for what you build." }
+    [pscustomobject]@{ File = "vpn-engine.md"; Title = "How the VPN engine works"
+        Description = "How VpnHood's VPN engine takes the adapter the platform makes, and how each packet travels between the adapter, the tunnel and the server." }
 )
 
 function Read-Text([string]$path) { [IO.File]::ReadAllText($path).TrimStart([char]0xFEFF) }
@@ -113,6 +117,20 @@ function Get-References([string]$csproj) {
 function ConvertTo-FrontMatter($values) {
     $lines = foreach ($key in $values.Keys) { "${key}: '$($values[$key] -replace "'", "''")'" }
     "---`n$($lines -join "`n")`n---`n`n"
+}
+
+# A page's banner, which the layout draws across the window's whole width under the top bar, above the page's menus,
+# alike on every page that has one (owner, 2026-11-14: "they just don't well organize and don't match together"): the
+# page's title, with its lead and links if it has them, on the dark left side, and the scene at the banner's full height
+# on the right; a scene whose left side is an empty wall takes the whole width instead (ArtWidth "100cqw"), cropped at
+# Position. The copy runs over the scene no further than Clear, the share of the scene's width that is empty at its
+# left. Below 992px the scene goes above the title, cropped to Ratio around Focus. The keys go into the front matter.
+function Add-Hero($front, [string]$heading, $hero, [string]$lead = "", [string]$actions = "") {
+    $values = [ordered]@{ vhHeroHeading = $heading; vhHeroImage = $hero.Image; vhHeroSmall = $hero.Small
+        vhHeroWidth = $hero.Width; vhHeroHeight = $hero.Height; vhHeroAlt = $hero.Alt; vhHeroLead = $lead
+        vhHeroActions = $actions; vhHeroArtWidth = $hero.ArtWidth ?? "300cqh"; vhHeroPosition = $hero.Position ?? "center"
+        vhHeroClear = $hero.Clear ?? "0.1"; vhHeroRatio = $hero.Ratio ?? "3 / 1"; vhHeroFocus = $hero.Focus ?? "center" }
+    foreach ($key in $values.Keys) { if ($values[$key]) { $front[$key] = $values[$key] } }
 }
 
 # the path a relative link in <dir> names, from VpnHood's root
@@ -366,13 +384,15 @@ foreach ($article in $articles) {
         "]($githubBlob$path$anchor)"
     })
     $text = Add-ApiLinks $text
+    $front = [ordered]@{ description = $article.Description }
     if ($article.Hero) {
-        $heading = [regex]::new('(?m)^# [^\r\n]*')
-        if (-not $heading.IsMatch($text)) { throw "docs/$($article.File) has no title for its picture to go under" }
-        $source = if ($article.HeroSmall) { "<source media=""(max-width: 767.98px)"" srcset=""../$($article.HeroSmall)"">" } else { "" }
-        $dimensions = if ($article.HeroWidth -and $article.HeroHeight) { " width=""$($article.HeroWidth)"" height=""$($article.HeroHeight)""" } else { "" }
-        $hero = "<p class=""vh-article-hero""><picture>$source<img src=""../$($article.Hero)""$dimensions fetchpriority=""high"" decoding=""async"" alt=""$(ConvertTo-Html $article.HeroAlt)""></picture></p>"
-        $text = $heading.Replace($text, { param($match) "$($match.Value)`n`n$hero`n" }, 1)
+        # the banner holds the page's title, so the page goes without its own
+        $heading = [regex]::new('(?m)^# ([^\r\n]*)\r?\n')
+        $title = $heading.Match($text)
+        if (-not $title.Success) { throw "docs/$($article.File) has no title for its banner" }
+        $text = $text.Remove($title.Index, $title.Length)
+        $front["title"] = $title.Groups[1].Value
+        Add-Hero $front $title.Groups[1].Value $article.Hero
     }
     # the page's steps: its first numbered list, each item with its picture and its bold lead as the step's title
     # (owner, 2026-11-13: "can you work on presentation of the items 1,2,3 here")
@@ -396,7 +416,7 @@ foreach ($article in $articles) {
         $lines.InsertRange($start, [string[]]@("<div class=""vh-steps"">", ""))
         $text = $lines -join "`n"
     }
-    Write-Text (Join-Path $WorkDir "articles/$($article.File)") ((ConvertTo-FrontMatter ([ordered]@{ description = $article.Description })) + $text)
+    Write-Text (Join-Path $WorkDir "articles/$($article.File)") ((ConvertTo-FrontMatter $front) + $text)
     $articleToc.Add("- name: $($article.Title)"); $articleToc.Add("  href: $($article.File)")
 }
 Write-Text (Join-Path $WorkDir "articles/toc.yml") (($articleToc -join "`n") + "`n")
@@ -528,21 +548,19 @@ $parts = foreach ($category in $categories) {
         "<img class=""vh-part-art"" src=""$($category.Art)"" alt="""">" +
         "<span class=""vh-part-title"">$(ConvertTo-Html $category.Title)</span><span class=""vh-part-text"">$(ConvertTo-Html $first)</span></a></div>"
 }
-$homeFront = ConvertTo-FrontMatter ([ordered]@{ _layout = "landing"; title = "VpnHood for developers"
-    description = "Build your own VPN app for Android, iOS, Windows and Linux, or use VpnHood's open-source .NET packages in yours: guides, a page for every package, and the API reference." })
-Write-Text (Join-Path $WorkDir "index.md") ($homeFront + @"
-<div class="vh-hero">
-  <picture class="vh-hero-art">
-    <source media="(max-width: 991.98px)" srcset="images/hero-forge-small.webp">
-    <img src="images/hero-forge.webp" width="2160" height="720" fetchpriority="high" decoding="async" alt="A hooded woman holds hot iron with tongs while a craftsman forges it beside a furnace built into the stone wall.">
-  </picture>
-  <div class="vh-hero-content">
-    <h1>Build your own VPN app</h1>
-    <p>Or use VpnHood's parts in any .NET application. It is open source, and every part is a NuGet package.</p>
-    <p class="vh-hero-actions"><a class="btn btn-light btn-lg" href="articles/build-your-app.md">Build your VPN app</a> <a class="btn btn-outline-light btn-lg" href="libraries/index.md">Browse the libraries</a></p>
-  </div>
-</div>
-
+$homeFront = [ordered]@{ _layout = "landing"; title = "VpnHood for developers"
+    description = "Build your own VPN app for Android, iOS, Windows and Linux, or use VpnHood's open-source .NET packages in yours: guides, a page for every package, and the API reference." }
+# the forge's left side, four tenths of it, is an empty wall kept for the copy, so the forge takes the banner's whole
+# width, its top kept, and no more: zoomed closer, the 4:1 banner only crops it differently (owner, 2026-11-14: "don't
+# zoom it"); on a phone the scene's right side, where the work is
+Add-Hero $homeFront "VpnHood for developers" @{ Image = "images/hero-forge.webp"; Small = "images/hero-forge-small.webp"
+        Width = 2160; Height = 720; ArtWidth = "100cqw"; Position = "center 26%"; Clear = "0.42"; Ratio = "16 / 9"
+        Focus = "right center"
+        Alt = "A hooded woman holds hot iron with tongs while a craftsman forges it beside a furnace built into the stone wall." } `
+    "Build your own VPN app from our template, or use VpnHood's parts in any .NET application. It is open source, and every part is a NuGet package." `
+    ('<a class="btn btn-light btn-lg" href="articles/build-your-app.html">Build your VPN app</a> ' +
+     '<a class="btn btn-outline-light btn-lg" href="libraries/index.html">Browse the libraries</a>')
+Write-Text (Join-Path $WorkDir "index.md") ((ConvertTo-FrontMatter $homeFront) + @"
 <div class="row row-cols-1 row-cols-md-3 g-4 vh-cards">
   <div class="col"><a class="card h-100" href="articles/build-your-app.md">
     <div class="vh-card-visual"><img src="images/card-your-app.svg" alt="An app made from the template under a brand of its own: its connect screen, connected, and its list of locations"></div>

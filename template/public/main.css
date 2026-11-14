@@ -3,26 +3,35 @@
   margin-right: 0.6rem;
 }
 
-/* The forge's dark left side holds the copy; the shared work stays visible on the right. */
+/* A page's banner, the home page's and a guide's alike: the window's whole width, right under the top bar and above the
+   page's menus (owner, 2026-11-14: "stretch both of them ... to feel more part of the top of the page"). Its title,
+   white, sits on the dark left side, lined up with the page. Its scene, 3:1, fills the banner's height on the right,
+   its left edge fading into the dark; a scene whose left side is an empty wall, as the forge's is, takes the whole width
+   instead (--vh-hero-art-width: 100cqw), cropped at --vh-hero-position. A quarter of its width tall, within limits, the
+   banner keeps three quarters of a full-width scene's height. */
 .vh-hero {
   position: relative;
   isolation: isolate;
   display: flex;
   align-items: center;
-  overflow: hidden;
+  width: 100%;  /* so the height limits do not reach the width through the ratio */
   aspect-ratio: 4 / 1;
-  min-height: 0;
-  margin: 1.5rem 0 2rem;
-  padding: clamp(1.25rem, 2vw, 2rem);
-  border-radius: 1rem;
+  min-height: 18rem;
+  max-height: 40rem;
+  margin: 0 0 1.5rem;
+  overflow: hidden;
   color: #fff;
-  background: #0c1321;
+  background: #0c121d;
+  container-type: size;  /* its size, for the scene's and the copy's widths below */
 }
 
 .vh-hero-art {
   position: absolute;
-  inset: 0;
-  z-index: -2;
+  top: 0;
+  right: 0;
+  width: var(--vh-hero-art-width, 300cqh);
+  height: 100%;
+  z-index: -1;
 }
 
 .vh-hero-art img {
@@ -30,35 +39,39 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 26%;
+  object-position: var(--vh-hero-position, center);
 }
 
-.vh-hero::after {
+.vh-hero-art::after {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: linear-gradient(90deg, rgba(9, 14, 25, 0.55), rgba(9, 14, 25, 0.12) 40%, transparent 58%);
+  background: linear-gradient(90deg, #0c121d, rgba(12, 18, 29, 0.55) 9%, rgba(12, 18, 29, 0) 22%);
 }
 
+/* The copy starts where the page does (DocFX's container: 1768px at most, gutters of 0.75rem), and runs over the scene
+   no further than the scene's empty left side, --vh-hero-clear of its width: most of the forge is an empty wall, but
+   the casting scene's furnace is near its edge, so its title wraps on a small laptop. */
 .vh-hero-content {
-  width: 46%;
-  max-width: 36rem;
+  --vh-hero-left: max(0.75rem, (100cqw - 1768px) / 2 + 0.75rem);
+  margin-left: var(--vh-hero-left);
+  padding: 1.5rem 0;
+  max-width: min(38rem, 100cqw - var(--vh-hero-art-width, 300cqh) * (1 - var(--vh-hero-clear, 0.1)) - var(--vh-hero-left) - 1rem);
 }
 
 .vh-hero h1 {
-  font-size: clamp(1.875rem, 2.6vw, 2.5rem);
-  line-height: 1.12;
+  font-size: clamp(2rem, 2.7vw, 3rem);
+  line-height: 1.1;
   font-weight: 700;
-  margin-bottom: 0.75rem;
+  margin: 0;
   text-wrap: balance;
 }
 
 .vh-hero p {
-  font-size: 1rem;
+  font-size: 1.05rem;
   line-height: 1.5;
   opacity: 0.92;
+  margin: 0.75rem 0 0;
 }
 
 .vh-hero-actions {
@@ -66,7 +79,6 @@
   flex-wrap: wrap;
   gap: 0.75rem;
   padding-top: 0.5rem;
-  margin-bottom: 0;
 }
 
 .vh-hero-actions .btn {
@@ -75,40 +87,40 @@
   padding: 0.65rem 0.9rem;
 }
 
-/* On tablets and phones, keep the scene above the copy so the furnace stays unobscured. */
+/* Below 992px the scene goes above the copy, cropped as the page asks: the forge to its work, the casting scene whole. */
 @media (max-width: 991.98px) {
   .vh-hero {
     display: block;
-    min-height: 0;
     aspect-ratio: auto;
-    padding: 0;
+    min-height: 0;
+    max-height: none;
+    container-type: normal;
   }
 
   .vh-hero-art {
     position: relative;
-    inset: auto;
     display: block;
-    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+    aspect-ratio: var(--vh-hero-ratio, 3 / 1);
   }
 
   .vh-hero-art img {
-    position: absolute;
-    inset: 0;
-    object-position: right center;
+    object-position: var(--vh-hero-focus, center);
   }
 
-  .vh-hero::after {
+  .vh-hero-art::after {
     content: none;
   }
 
   .vh-hero-content {
-    width: auto;
     max-width: none;
-    padding: 1.75rem 1.5rem;
+    margin: 0;
+    padding: 1.4rem 1.5rem 1.6rem;
   }
 
   .vh-hero h1 {
-    font-size: clamp(2rem, 7vw, 2.6rem);
+    font-size: clamp(1.9rem, 7vw, 2.5rem);
   }
 }
 .vh-cards a.card {
@@ -274,24 +286,6 @@
 
 .vh-scenario-packages {
   font-size: 0.85rem;
-}
-
-/* a guide's picture, under its title */
-.vh-article-hero {
-  margin: 0.75rem 0 1.75rem;
-  overflow: hidden;
-  border-radius: 0.75rem;
-}
-
-.vh-article-hero picture {
-  display: block;
-}
-
-/* Keep the complete casting scene visible at every width. */
-.vh-article-hero img {
-  display: block;
-  width: 100%;
-  height: auto;
 }
 
 /* the Libraries page: a card for each group of packages; an abstraction's border is dashed, as its drawing is */
