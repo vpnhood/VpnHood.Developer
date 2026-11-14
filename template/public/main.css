@@ -265,3 +265,78 @@
   max-width: 34rem;
   height: auto;
 }
+
+/* a guide's steps (Build your VPN app): a numbered circle on a line, the step's title, and its picture beside its text;
+   on a phone, the picture above it */
+.vh-steps > ol {
+  list-style: none;
+  counter-reset: vh-step;
+  padding-left: 0;
+  margin: 1.25rem 0 1.5rem;
+}
+
+.vh-steps > ol > li {
+  counter-increment: vh-step;
+  display: flow-root;
+  position: relative;
+  padding: 0.25rem 0 1.75rem 3.25rem;
+}
+
+.vh-steps > ol > li::before {
+  content: counter(vh-step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8a6dff, #4a25c9);
+  color: #fff;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vh-steps > ol > li:last-child {
+  padding-bottom: 0.25rem;
+}
+
+.vh-steps > ol > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: calc(1.125rem - 1px);
+  top: 2.6rem;
+  bottom: 0.4rem;
+  width: 2px;
+  background: rgba(123, 92, 255, 0.3);
+}
+
+.vh-steps > ol > li > strong:first-of-type,
+.vh-steps > ol > li > p:first-child > strong:first-of-type {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 0.35rem;
+}
+
+.vh-steps ul {
+  display: flow-root;
+  margin-top: 0.5rem;
+}
+
+.vh-step-art {
+  float: right;
+  width: 15rem;
+  height: auto;
+  margin: 0 0 0.75rem 1.25rem;
+}
+
+@media (max-width: 767.98px) {
+  .vh-step-art {
+    float: none;
+    display: block;
+    width: 100%;
+    max-width: 18rem;
+    margin: 0.25rem 0 0.75rem;
+  }
+}

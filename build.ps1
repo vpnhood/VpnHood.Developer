@@ -44,12 +44,15 @@ $categories = @((Import-PowerShellDataFile (Join-Path $PSScriptRoot "categories.
 $excluded = @("VpnHood.Net.Http3")
 
 # the hand-written pages, in reading order: files of docs/, never a glob. A page's Hero is a picture of images/ that the
-# site shows under its title; the page on GitHub goes without it, so VpnHood keeps no pictures for the site.
+# site shows under its title; its Steps are a picture for each item of its first numbered list, which the site shows as
+# steps. The page on GitHub goes without them, so VpnHood keeps no pictures for the site.
 $articles = @(
     [pscustomobject]@{ File = "build-your-app.md"; Title = "Build your VPN app"
         Description = "Build your own VPN app for Android, iOS, Windows and Linux from VpnHood.App.Template, on VpnHood's NuGet packages."
-        Hero = "images/hero-build-your-app.svg"
-        HeroAlt = "Three steps: use VpnHood.App.Template, make it yours in app.props, appsettings.json, branding and icons, and build it with dotnet for Android, iOS, Windows and Linux" }
+        Steps = @(
+            @{ Art = "images/step-template.svg"; Alt = "Use this template, on VpnHood.App.Template's GitHub page, makes a repository of your own" }
+            @{ Art = "images/step-yours.svg"; Alt = "Your repository's app folder: app.props, appsettings.json, branding and icons" }
+            @{ Art = "images/step-build.svg"; Alt = "dotnet build makes the app for Android, iOS, Windows and Linux" }) }
     [pscustomobject]@{ File = "app-startup.md"; Title = "How a VpnHood app starts"
         Description = "How a head starts a VpnHood app: who the app is, its options with its store's providers, and what the host builds from them on Android, iOS, Windows and Linux." }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
@@ -364,6 +367,28 @@ foreach ($article in $articles) {
         if (-not $heading.IsMatch($text)) { throw "docs/$($article.File) has no title for its picture to go under" }
         $hero = "<p class=""vh-article-hero""><img src=""../$($article.Hero)"" alt=""$(ConvertTo-Html $article.HeroAlt)""></p>"
         $text = $heading.Replace($text, { param($match) "$($match.Value)`n`n$hero`n" }, 1)
+    }
+    # the page's steps: its first numbered list, each item with its picture and its bold lead as the step's title
+    # (owner, 2026-11-13: "can you work on presentation of the items 1,2,3 here")
+    if ($article.Steps) {
+        $lines = [Collections.Generic.List[string]]::new([string[]]($text -split "\r?\n"))
+        $start = -1
+        for ($i = 0; $i -lt $lines.Count; $i++) { if ($lines[$i] -match '^1\. ') { $start = $i; break } }
+        if ($start -lt 0) { throw "docs/$($article.File) has no numbered list for its steps" }
+        $count = 0; $end = $lines.Count
+        for ($i = $start; $i -lt $lines.Count; $i++) {
+            if ($lines[$i] -match '^\d+\. ') {
+                if ($count -ge $article.Steps.Count) { throw "docs/$($article.File) has more steps than pictures" }
+                $step = $article.Steps[$count++]
+                $rest = $lines[$i].Substring($Matches[0].Length) -replace '^\*\*(.+?)\.\*\*', '**$1**'
+                $lines[$i] = $Matches[0] + "<img class=""vh-step-art"" src=""../$($step.Art)"" alt=""$(ConvertTo-Html $step.Alt)""> " + $rest
+            }
+            elseif ($lines[$i] -and $lines[$i] -notmatch '^\s') { $end = $i; break }
+        }
+        if ($count -ne $article.Steps.Count) { throw "docs/$($article.File) has $count steps for $($article.Steps.Count) pictures" }
+        $lines.InsertRange($end, [string[]]@("", "</div>", ""))
+        $lines.InsertRange($start, [string[]]@("<div class=""vh-steps"">", ""))
+        $text = $lines -join "`n"
     }
     Write-Text (Join-Path $WorkDir "articles/$($article.File)") ((ConvertTo-FrontMatter ([ordered]@{ description = $article.Description })) + $text)
     $articleToc.Add("- name: $($article.Title)"); $articleToc.Add("  href: $($article.File)")

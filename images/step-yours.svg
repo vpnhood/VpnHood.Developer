@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 160" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" role="img" aria-label="Your repository's app folder: app.props, appsettings.json, branding and icons">
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8f6ff"/><stop offset="1" stop-color="#e8e0ff"/></linearGradient>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a6dff"/><stop offset="1" stop-color="#4a25c9"/></linearGradient>
+    <linearGradient id="deep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2190"/><stop offset="1" stop-color="#1c0f45"/></linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4af0d2"/><stop offset="1" stop-color="#119e87"/></linearGradient>
+    <linearGradient id="tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f3ff"/><stop offset="1" stop-color="#d9ceff"/></linearGradient>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#c4b6ff" opacity="0.5"/></pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#2a1660" flood-opacity="0.2"/></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b5cff"/></marker>
+  </defs>
+  <rect x="2" y="2" width="256" height="156" rx="24" fill="url(#backdrop)"/>
+  <rect x="2" y="2" width="256" height="156" rx="24" fill="url(#dots)"/>
+  <rect x="12" y="12" width="236" height="136" rx="16" fill="url(#purple)" filter="url(#shadow)"/>
+  <text x="28" y="40" font-size="15" font-weight="800" fill="#fff" text-anchor="start">your-vpn-app / app</text>
+  <circle cx="226" cy="34" r="12" fill="url(#teal)"/>
+  <path d="M222.05 34 l3.52 3.52 l6.38 -6.82" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="28" y="56" width="140" height="30" rx="15" fill="#ffffff" fill-opacity="0.2"/>
+  <text x="40" y="76" font-size="14" font-weight="600" fill="#fff" text-anchor="start">appsettings.json</text>
+  <rect x="176" y="56" width="60" height="30" rx="15" fill="#ffffff" fill-opacity="0.2"/>
+  <text x="188" y="76" font-size="14" font-weight="600" fill="#fff" text-anchor="start">icons/</text>
+  <rect x="28" y="96" width="94" height="30" rx="15" fill="#ffffff" fill-opacity="0.2"/>
+  <text x="40" y="116" font-size="14" font-weight="600" fill="#fff" text-anchor="start">app.props</text>
+  <rect x="130" y="96" width="94" height="30" rx="15" fill="#ffffff" fill-opacity="0.2"/>
+  <text x="142" y="116" font-size="14" font-weight="600" fill="#fff" text-anchor="start">branding/</text>
+</svg>
