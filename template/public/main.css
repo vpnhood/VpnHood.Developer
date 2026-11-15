@@ -340,6 +340,61 @@
   height: auto;
 }
 
+/* Microsoft Learn's colours, as its theme variables give them (owner, 2026-11-15: "Use the color that Microsoft uses in
+   their doc"): the page, its text, subtle text, links, borders, panels, and inline code on a grey of its own. In dark
+   mode the text keeps Bootstrap's softer grey, as Learn's white was too bright on the page (owner: "our text is much
+   better. The new one contrast really annoying eyes in dark mode") */
+[data-bs-theme="light"] {
+  --bs-body-bg: #fff;
+  --bs-body-bg-rgb: 255, 255, 255;
+  --bs-body-color: #161616;
+  --bs-body-color-rgb: 22, 22, 22;
+  --bs-emphasis-color: #161616;
+  --bs-secondary-color: #505050;
+  --bs-link-color: #0065b3;
+  --bs-link-color-rgb: 0, 101, 179;
+  --bs-link-hover-color: #0065b3;
+  --bs-link-hover-color-rgb: 0, 101, 179;
+  --bs-border-color: #e6e6e6;
+  --bs-secondary-bg: #f5f5f5;
+  --bs-tertiary-bg: #f0f0f0;
+  --bs-code-color: #161616;
+  --vh-code-bg: #e6e6e6;
+}
+
+[data-bs-theme="dark"] {
+  --bs-body-bg: #1f1f1f;
+  --bs-body-bg-rgb: 31, 31, 31;
+  --bs-link-color: #75b6e7;
+  --bs-link-color-rgb: 117, 182, 231;
+  --bs-link-hover-color: #75b6e7;
+  --bs-link-hover-color-rgb: 117, 182, 231;
+  --bs-border-color: #404040;
+  --bs-secondary-bg: #404040;
+  --bs-tertiary-bg: #333;
+  --bs-code-color: var(--bs-body-color);
+  --vh-code-bg: #404040;
+}
+
+article :not(pre) > code {
+  padding: 0.1em 0.3em;
+  border-radius: 0.2rem;
+  background: var(--vh-code-bg);
+}
+
+/* a section's heading stands well apart from the section before it and close to its own text, and in dark mode it is
+   brighter than the text (owner, 2026-11-15: "the title and body goes into each other too much in dark mode") */
+article h2,
+article h3 {
+  margin-top: 2rem;
+  font-weight: 600;
+}
+
+[data-bs-theme="dark"] article h2,
+[data-bs-theme="dark"] article h3 {
+  color: #fff;
+}
+
 /* a sample's screenshot, from its folder in VpnHood.App.Samples: the device's own frame is in the picture (owner,
    2026-11-15: "add some Windows or android device frame over photo"), shown at about a phone's size; the samples' README
    shows them small, side by side, at the width it gives them */
