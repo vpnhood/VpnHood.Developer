@@ -31,7 +31,7 @@ jobs:
       DOTNET_NOLOGO: "1"
       DOTNET_CLI_TELEMETRY_OPTOUT: "1"
     steps:
-      # side by side, as build.ps1 expects them: this repo, VpnHood and VpnHood.Net.Proxies
+      # side by side, as build.ps1 expects them: this repo, VpnHood, VpnHood.Net.Proxies, and the samples and template
       - uses: actions/checkout@v7
         with: { path: site }
       - uses: actions/checkout@v7
@@ -47,6 +47,14 @@ jobs:
         with:
           repository: vpnhood/VpnHood.Net.Proxies
           path: VpnHood.Net.Proxies
+      - uses: actions/checkout@v7
+        with:
+          repository: vpnhood/VpnHood.App.Samples
+          path: VpnHood.App.Samples
+      - uses: actions/checkout@v7
+        with:
+          repository: vpnhood/VpnHood.App.Template
+          path: VpnHood.App.Template
       # The SDK VpnHood's global.json names, by its version: setup-dotnet reads that file's rollForward latestMajor as the
       # LTS channel and would install .NET 10 instead.
       - name: Read the SDK version VpnHood's global.json names

@@ -4,9 +4,10 @@ Builds developer.vpnhood.com into a folder outside the repos.
 
 .DESCRIPTION
 The site's text is VpnHood's own, read from a clone of vpnhood/VpnHood next to this repo; this repo adds the look, the
-pictures and the categories. The site has three parts:
+pictures and the categories. The site has four parts:
 - Start here: the hand-written pages on the allow-list below, copied from VpnHood's docs/. Never a glob: the rest of
   docs/ is maintainer notes, not product documentation. A link to a page left out goes to its copy on GitHub.
+- Samples and templates: the app template and the samples, each a repository of its own, from its README.
 - Libraries: a page for every package - its README, or, for a package without one, a page made from its project: what
   it does, how to add it, its API, and which of our packages it depends on and which use it.
 - API reference: every public member, from the doc comments.
@@ -26,6 +27,9 @@ param(
     [string]$VpnHoodRoot = (Join-Path $PSScriptRoot "../VpnHood"),
     # a clone of vpnhood/VpnHood.Net.Proxies
     [string]$ProxiesRoot = (Join-Path $PSScriptRoot "../VpnHood.Net.Proxies"),
+    # clones of vpnhood/VpnHood.App.Samples and vpnhood/VpnHood.App.Template, for Samples and templates
+    [string]$SamplesRoot = (Join-Path $PSScriptRoot "../VpnHood.App.Samples"),
+    [string]$TemplateRoot = (Join-Path $PSScriptRoot "../VpnHood.App.Template"),
     [string]$BaseUrl = "https://developer.vpnhood.com/",
     # keep the last run's API metadata, when only the pages changed
     [switch]$SkipMetadata
@@ -35,6 +39,8 @@ $ErrorActionPreference = "Stop"
 $vpnHood = (Resolve-Path $VpnHoodRoot).Path
 $src = Join-Path $vpnHood "src"
 $ProxiesRoot = (Resolve-Path $ProxiesRoot).Path
+$SamplesRoot = (Resolve-Path $SamplesRoot).Path
+$TemplateRoot = (Resolve-Path $TemplateRoot).Path
 $githubBlob = "https://github.com/vpnhood/VpnHood/blob/develop/"
 
 # the four big categories, with their pictures and real-world scenarios
@@ -239,7 +245,7 @@ if ($ungrouped) { Write-Warning "packages in no group of categories.psd1: $($ung
 
 # --- the work folder: generated parts gone, the fixed parts copied in
 New-Item -ItemType Directory -Force $WorkDir | Out-Null
-$generated = @("libraries", "articles", "api", "_site", "images", "template", "index.md", "toc.yml", "docfx.json", "filterConfig.yml", "robots.txt")
+$generated = @("libraries", "articles", "samples", "api", "_site", "images", "template", "index.md", "toc.yml", "docfx.json", "filterConfig.yml", "robots.txt")
 if (-not $SkipMetadata) { $generated += "api-main" }
 foreach ($item in $generated) {
     $path = Join-Path $WorkDir $item
@@ -420,6 +426,89 @@ foreach ($article in $articles) {
     $articleToc.Add("- name: $($article.Title)"); $articleToc.Add("  href: $($article.File)")
 }
 Write-Text (Join-Path $WorkDir "articles/toc.yml") (($articleToc -join "`n") + "`n")
+
+# --- Samples and templates (owner, 2026-11-15: "a page for our sample and describe them what they do. So they can go
+# and check the samples. Later, we need to add templates too"): each is a repository of its own, and its words are its
+# README's, so nothing is written twice. The template, a whole app, comes first; the samples follow, each one part of
+# VpnHood at work. The SPA's sample is not one of them (owner: "I don't think we should refer to SPA because it is
+# complicated", and "the template sample would work much better than SPA").
+$github = "https://github.com/vpnhood/"
+
+# a README's first paragraph, its title and notes passed over
+function Get-Lead([string]$readme) {
+    foreach ($block in ((Read-Text $readme) -split '\r?\n\s*\r?\n')) {
+        $block = $block.Trim()
+        if ($block -and $block -notmatch '^(#|>|\||<|!\[)') { return ($block -split '\s*\r?\n\s*') -join " " }
+    }
+    throw "$readme has no paragraph to describe its repository"
+}
+
+$samplesTree = "$($github)VpnHood.App.Samples/tree/main/"
+$samplesReadme = Read-Text (Join-Path $SamplesRoot "README.md")
+$samplesTitle = [regex]::Match($samplesReadme, '(?m)^# [^\r\n]*\r?\n')
+if (-not $samplesTitle.Success) { throw "VpnHood.App.Samples' README has no title" }
+
+# A sample with a README in its folder gets a page of its own, made from it (owner, 2026-11-15: "a readme in each folder
+# of the sample", with its screenshot): its pictures go beside the page, and its other links, to its files and the other
+# samples' folders, to GitHub. Its folder on GitHub comes under its title.
+$sampleNames = [Collections.Generic.List[string]]::new()
+foreach ($match in [regex]::Matches($samplesReadme, '\]\(([A-Za-z0-9_.-]+)/?\)')) {
+    $name = $match.Groups[1].Value
+    if ((Test-Path (Join-Path $SamplesRoot "$name/README.md")) -and -not $sampleNames.Contains($name)) { $sampleNames.Add($name) }
+}
+$sampleToc = [Collections.Generic.List[string]]::new([string[]]@("- name: Samples and templates", "  href: index.md"))
+foreach ($name in $sampleNames) {
+    $text = Read-Text (Join-Path $SamplesRoot "$name/README.md")
+    $text = [regex]::Replace($text, '\]\(([^)\s#]+)(#[^)\s]*)?\)', {
+        param($match)
+        $target = $match.Groups[1].Value; $anchor = $match.Groups[2].Value
+        if ($target -match "^[a-zA-Z][a-zA-Z0-9+.-]*:") { return $match.Value }  # a URL
+        $file = Join-Path $SamplesRoot "$name/$target"
+        if ($target -match '\.(png|jpe?g|webp|gif|svg)$' -and (Test-Path $file)) {
+            $copy = Join-Path $WorkDir "samples/$name/$target"
+            New-Item -ItemType Directory -Force (Split-Path $copy -Parent) | Out-Null
+            Copy-Item $file $copy
+            return "]($name/$target)"
+        }
+        $path = (Resolve-RepoPath $name $target).TrimEnd("/")
+        if ($sampleNames.Contains($path)) { return "]($path.md$anchor)" }
+        "]($samplesTree$path$anchor)"
+    })
+    $title = [regex]::Match($text, '(?m)^# [^\r\n]*\r?\n')
+    if (-not $title.Success) { throw "$name's README has no title" }
+    $text = $text.Insert($title.Index + $title.Length, "`n[$name on GitHub]($samplesTree$name)`n")
+    Write-Text (Join-Path $WorkDir "samples/$name.md") ((ConvertTo-FrontMatter ([ordered]@{ description = (Get-Lead (Join-Path $SamplesRoot "$name/README.md")) -replace '`', '' })) +
+        (Add-ApiLinks $text))
+    $sampleToc.Add("- name: $name"); $sampleToc.Add("  href: $name.md")
+}
+
+# the samples' table: a sample with a page links to it, any other folder to GitHub
+$samples = [regex]::Replace($samplesReadme.Substring($samplesTitle.Index + $samplesTitle.Length).Trim(), '\]\(([^)\s#:]+)\)', {
+    param($match)
+    $target = $match.Groups[1].Value.TrimStart('./').TrimEnd('/')
+    if ($sampleNames.Contains($target)) { return "]($target.md)" }
+    "]($samplesTree$target)"
+})
+$page = @"
+# Samples and templates
+
+Start from a template to make a whole app of your own, or read a sample to see one part of VpnHood at work. Each is a
+repository on GitHub, built on VpnHood's NuGet packages.
+
+## Templates
+
+| Template | What it is |
+| --- | --- |
+| [VpnHood.App.Template]($($github)VpnHood.App.Template) | $(Get-Lead (Join-Path $TemplateRoot "README.md")) [Build your VPN app](../articles/build-your-app.md) makes it yours. |
+
+## Samples
+
+$samples
+"@
+Write-Text (Join-Path $WorkDir "samples/index.md") ((ConvertTo-FrontMatter ([ordered]@{
+    description = "VpnHood's app template and its samples: a whole VPN app to make your own, and small apps that each show one part of VpnHood at work." })) +
+    (Add-ApiLinks $page))
+Write-Text (Join-Path $WorkDir "samples/toc.yml") (($sampleToc -join "`n") + "`n")
 
 # --- a page for every group: what it is for, when to use it, which package to take, and its packages (owner, 2026-11-13:
 # "describe in their landing page that whats the use of this, when to use it")

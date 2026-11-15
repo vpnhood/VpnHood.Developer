@@ -1,6 +1,9 @@
 - name: Start here
   href: articles/
   topicHref: articles/build-your-app.md
+- name: Samples and templates
+  href: samples/
+  topicHref: samples/index.md
 - name: Libraries
   href: libraries/
   topicHref: libraries/index.md

@@ -6,6 +6,10 @@ written, in [VpnHood](https://github.com/vpnhood/VpnHood), so nothing is written
 
 - **Start here:** the pages `build.ps1` lists in `$articles`, from VpnHood's `docs/`. Only those: the rest of `docs/`
   is maintainers' notes, not product documentation.
+- **Samples and templates:** [VpnHood.App.Template](https://github.com/vpnhood/VpnHood.App.Template), described by its
+  README's first paragraph, then the samples, from
+  [VpnHood.App.Samples](https://github.com/vpnhood/VpnHood.App.Samples)' README; a sample with a README in its folder
+  gets a page of its own made from it, its screenshot beside it.
 - **Libraries:** each package's `README.md`, or, for a package without one, a page made from its project.
 - **API reference:** the doc comments of every package whose project sets `VhApiDocsComplete`, the gate that fails
   its build on a missing comment, plus VpnHood.Net.Proxies from its own repo.
@@ -29,8 +33,9 @@ its DNS a CNAME to `vpnhood.github.io` at Cloudflare, proxied as www.vpnhood.com
 
 ## Build it locally
 
-Next to clones of [VpnHood](https://github.com/vpnhood/VpnHood) and
-[VpnHood.Net.Proxies](https://github.com/vpnhood/VpnHood.Net.Proxies), with the workloads the packages need
+Next to clones of [VpnHood](https://github.com/vpnhood/VpnHood),
+[VpnHood.Net.Proxies](https://github.com/vpnhood/VpnHood.Net.Proxies), VpnHood.App.Samples and VpnHood.App.Template,
+with the workloads the packages need
 (`android`, `ios`, `tvos`, `maui-android`, `maui-windows`):
 
 ```powershell

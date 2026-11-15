@@ -4,10 +4,10 @@
   "build": {
     "content": [
       { "files": [ "api/**.yml" ] },
-      { "files": [ "index.md", "toc.yml", "articles/**.md", "articles/toc.yml", "libraries/**.md", "libraries/toc.yml", "api/index.md" ] }
+      { "files": [ "index.md", "toc.yml", "articles/**.md", "articles/toc.yml", "samples/**.md", "samples/toc.yml", "libraries/**.md", "libraries/toc.yml", "api/index.md" ] }
     ],
     "resource": [
-      { "files": [ "images/**", "robots.txt" ] }
+      { "files": [ "images/**", "samples/*/**", "robots.txt" ] }
     ],
     "output": "_site",
     "template": [ "default", "modern", "template" ],

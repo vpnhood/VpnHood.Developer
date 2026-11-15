@@ -340,6 +340,17 @@
   height: auto;
 }
 
+/* a sample's screenshot, from its folder in VpnHood.App.Samples: the device's own frame is in the picture (owner,
+   2026-11-15: "add some Windows or android device frame over photo"), shown at about a phone's size */
+article img[src$="/screenshot.png"] {
+  display: block;
+  width: 16rem;
+  max-width: 100%;
+  height: auto;
+  margin: 0.5rem 0 1rem;
+  filter: drop-shadow(0 0.4rem 0.8rem rgba(0, 0, 0, 0.18));
+}
+
 /* On a phone, a table's columns were squeezed to a few words a line, or ran off the screen behind a scroll bar: each row
    is a card there, its first cell the card's title and each other cell under its column's name, which main.js gives it
    (data-label). DocFX gives every table of a page's text the class "table", whose cell rules these override. */
