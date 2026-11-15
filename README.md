@@ -43,7 +43,8 @@ dotnet docfx serve $env:TEMP/vh-developer-site/_site
 `template/layout/_master.tmpl` is DocFX's own layout with a canonical link added: compare it with the new DocFX's
 `templates/modern/layout/_master.tmpl` when `.config/dotnet-tools.json` moves to another version.
 `template/public/main.js` sets DocFX's `showLightbox`, so a click on the site's heroes and art opens nothing, while a
-picture in a page's own text still opens alone at full size.
+picture in a page's own text still opens alone at full size. It also lets a long dotted name wrap after its dots, and
+gives each table cell its column's name, so that on a phone `main.css` shows every table's rows as cards.
 
 ## Forge hero artwork
 
