@@ -65,6 +65,12 @@ $articles = @(
             @{ Art = "images/step-template.svg"; Alt = "Use this template, on VpnHood.App.Template's GitHub page, makes a repository of your own" }
             @{ Art = "images/step-yours.svg"; Alt = "Your repository's app folder: app.props, appsettings.json, branding and icons" }
             @{ Art = "images/step-build.svg"; Alt = "dotnet build makes the app for Android, iOS, Windows and Linux" }) }
+    # how much of the app you write yourself: the whole app above, then your own screens, then the engine alone (owner,
+    # 2026-11-15: "I'm okay with 1 and 2")
+    [pscustomobject]@{ File = "use-the-app-logic.md"; Title = "Your own screens over the app's logic"
+        Description = "Put screens of your own over VpnHood's app logic, a whole VPN app without its UI: start it, connect, and show its state through the app's API." }
+    [pscustomobject]@{ File = "use-the-engine.md"; Title = "Use the VPN engine in your own app"
+        Description = "Connect with VpnHood's VPN engine from your own app: in your own process on Windows, or through the VPN service on Android." }
     [pscustomobject]@{ File = "app-startup.md"; Title = "How a VpnHood app starts"
         Description = "How a head starts a VpnHood app: who the app is, its options with its store's providers, and what the host builds from them on Android, iOS, Windows and Linux." }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
@@ -388,6 +394,13 @@ foreach ($article in $articles) {
         $path = Resolve-RepoPath $dir $target
         if ($listed.ContainsKey($path)) { return "]($($listed[$path])$anchor)" }
         "]($githubBlob$path$anchor)"
+    })
+    # a sample's folder on GitHub is its page here, where it has one (Samples and templates, below)
+    $text = [regex]::Replace($text, '\]\(https://github\.com/vpnhood/VpnHood\.App\.Samples/tree/main/([A-Za-z0-9_.-]+)/?\)', {
+        param($match)
+        $name = $match.Groups[1].Value
+        if (Test-Path (Join-Path $SamplesRoot "$name/README.md")) { return "](../samples/$name.md)" }
+        $match.Value
     })
     $text = Add-ApiLinks $text
     $front = [ordered]@{ description = $article.Description }
