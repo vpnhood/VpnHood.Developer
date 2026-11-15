@@ -1,0 +1,22 @@
+{
+  "name": "VpnHood! Developer",
+  "short_name": "VpnHood! Dev",
+  "description": "Build your own VPN app and server with VpnHood's open-source libraries.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#122272",
+  "icons": [
+    {
+      "src": "/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

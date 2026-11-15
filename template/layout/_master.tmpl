@@ -19,7 +19,14 @@
       {{#_description}}<meta name="description" content="{{_description}}">{{/_description}}
       {{#description}}<meta name="description" content="{{description}}">{{/description}}
       {{#_canonicalBase}}<link rel="canonical" href="{{_canonicalBase}}{{_path}}">{{/_canonicalBase}}
-      <link rel="icon" href="{{_rel}}{{{_appFaviconPath}}}{{^_appFaviconPath}}favicon.ico{{/_appFaviconPath}}">
+      {{!www.vpnhood.com's icons. favicon.svg switches with the browser's light or dark theme; the .ico is for browsers
+         with no SVG favicon, and must declare one size and come first, or Chromium prefers it to the SVG. The manifest
+         lists PNGs only: Chrome takes an SVG for an installed app's icon, and this one is a white mark on nothing in a
+         dark theme. Its icons are www's with a DEV ribbon.}}
+      <link rel="icon" href="{{_rel}}images/favicon.ico" sizes="32x32">
+      <link rel="icon" href="{{_rel}}images/favicon.svg" type="image/svg+xml">
+      <link rel="apple-touch-icon" href="{{_rel}}images/apple-touch-icon.png">
+      <link rel="manifest" href="{{_rel}}images/site.webmanifest">
       <link rel="stylesheet" href="{{_rel}}public/docfx.min.css">
       <link rel="stylesheet" href="{{_rel}}public/main.css">
       <meta name="docfx:navrel" content="{{_navRel}}">

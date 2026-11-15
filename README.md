@@ -42,6 +42,11 @@ dotnet docfx serve $env:TEMP/vh-developer-site/_site
 
 `template/layout/_master.tmpl` is DocFX's own layout with a canonical link added: compare it with the new DocFX's
 `templates/modern/layout/_master.tmpl` when `.config/dotnet-tools.json` moves to another version.
+The layout also links the site's icons, all in `images/`: `favicon.svg` and `favicon.ico`, copies of www.vpnhood.com's,
+for the browser tab, and for an installed site `site.webmanifest`, `icon-192.png`, `icon-512.png` and
+`apple-touch-icon.png`, www's icon with a DEV ribbon, the apple-touch icon on white, as iOS fills a transparent
+corner with black. Those three are exported by the team's artwork script that draws the icon; replace them from a new
+export, never edit them by hand.
 `template/public/main.js` sets DocFX's `showLightbox`, so a click on the site's heroes and art opens nothing, while a
 picture in a page's own text still opens alone at full size. It also lets a long dotted name wrap after its dots, and
 gives each table cell its column's name, so that on a phone `main.css` shows every table's rows as cards.
