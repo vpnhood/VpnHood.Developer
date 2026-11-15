@@ -71,6 +71,8 @@ $articles = @(
         Description = "Put screens of your own over VpnHood's app logic, a whole VPN app without its UI: start it, connect, and show its state through the app's API." }
     [pscustomobject]@{ File = "use-the-engine.md"; Title = "Use the VPN engine in your own app"
         Description = "Connect with VpnHood's VPN engine from your own app: in your own process on Windows, or through the VPN service on Android." }
+    [pscustomobject]@{ File = "run-a-server.md"; Title = "Run a VPN server from your own code"
+        Description = "Run VpnHood's server engine in a .NET program of your own, with access keys kept in files: start it, and make a key a client connects with." }
     [pscustomobject]@{ File = "app-startup.md"; Title = "How a VpnHood app starts"
         Description = "How a head starts a VpnHood app: who the app is, its options with its store's providers, and what the host builds from them on Android, iOS, Windows and Linux." }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
@@ -487,6 +489,7 @@ foreach ($name in $sampleNames) {
         if ($sampleNames.Contains($path)) { return "]($path.md$anchor)" }
         "]($samplesTree$path$anchor)"
     })
+    $text = $text -replace '\]\(https://developer\.vpnhood\.com/([^)\s#]+?)\.html', '](../$1.md'  # this site's own pages
     $title = [regex]::Match($text, '(?m)^# [^\r\n]*\r?\n')
     if (-not $title.Success) { throw "$name's README has no title" }
     $text = $text.Insert($title.Index + $title.Length, "`n[$name on GitHub]($samplesTree$name)`n")
@@ -495,13 +498,26 @@ foreach ($name in $sampleNames) {
     $sampleToc.Add("- name: $name"); $sampleToc.Add("  href: $name.md")
 }
 
-# the samples' table: a sample with a page links to it, any other folder to GitHub
-$samples = [regex]::Replace($samplesReadme.Substring($samplesTitle.Index + $samplesTitle.Length).Trim(), '\]\(([^)\s#:]+)\)', {
+# the samples' README under the page's Samples heading, its own headings a level down: a sample with a page links to
+# it, any other folder to GitHub, and this site's own pages within the site; the pictures it shows go beside the page
+$samples = $samplesReadme.Substring($samplesTitle.Index + $samplesTitle.Length).Trim()
+$samples = [regex]::Replace($samples, 'src="([^":]+\.(?:png|jpe?g|webp|gif|svg))"', {
+    param($match)
+    $file = Join-Path $SamplesRoot $match.Groups[1].Value
+    if (-not (Test-Path $file)) { throw "VpnHood.App.Samples' README shows $($match.Groups[1].Value), which it does not have" }
+    $copy = Join-Path $WorkDir "samples/$($match.Groups[1].Value)"
+    New-Item -ItemType Directory -Force (Split-Path $copy -Parent) | Out-Null
+    Copy-Item $file $copy -Force
+    $match.Value
+})
+$samples = [regex]::Replace($samples, '\]\(([^)\s#:]+)\)', {
     param($match)
     $target = $match.Groups[1].Value.TrimStart('./').TrimEnd('/')
     if ($sampleNames.Contains($target)) { return "]($target.md)" }
     "]($samplesTree$target)"
 })
+$samples = $samples -replace '\]\(https://developer\.vpnhood\.com/([^)\s#]+?)\.html', '](../$1.md'
+$samples = [regex]::Replace($samples, '(?m)^(#{2,5}) ', '#$1 ')
 $page = @"
 # Samples and templates
 
