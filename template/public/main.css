@@ -467,6 +467,11 @@ article img[src$="/screenshot.png"][width] {
   margin-top: 0.5rem;
 }
 
+/* a section's picture beside its first paragraph (build.ps1's Beside), in a step's picture's place */
+.vh-beside {
+  display: flow-root;
+}
+
 .vh-step-art {
   float: right;
   width: 15rem;

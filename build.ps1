@@ -64,7 +64,12 @@ $articles = @(
         Steps = @(
             @{ Art = "images/step-template.svg"; Alt = "Use this template, on VpnHood.App.Template's GitHub page, makes a repository of your own" }
             @{ Art = "images/step-yours.svg"; Alt = "Your repository's app folder: app.props, appsettings.json, branding and icons" }
-            @{ Art = "images/step-build.svg"; Alt = "dotnet build makes the app for Android, iOS, Windows and Linux" }) }
+            @{ Art = "images/step-build.svg"; Alt = "dotnet build makes the app for Android, iOS, Windows and Linux" })
+        # a section's picture, beside its first paragraph, and a link to where it leads (owner, 2026-11-15: "Some
+        # abstract drawing like others is adequate", for the samples)
+        Beside = @(
+            @{ Heading = "The samples"; Art = "images/samples.svg"; Href = "../samples/index.md"
+                Alt = "The samples: the VPN engine in a console, the app on a phone, and a server" }) }
     # how much of the app you write yourself: the whole app above, then your own screens, then the engine alone (owner,
     # 2026-11-15: "I'm okay with 1 and 2")
     [pscustomobject]@{ File = "use-the-app-logic.md"; Title = "Your own screens over the app's logic"
@@ -404,6 +409,9 @@ foreach ($article in $articles) {
         if (Test-Path (Join-Path $SamplesRoot "$name/README.md")) { return "](../samples/$name.md)" }
         $match.Value
     })
+    # the samples' repository is the Samples page here (owner, 2026-11-15: "we should link to sample page in
+    # build-your-app.html")
+    $text = $text -replace '\]\(https://github\.com/vpnhood/VpnHood\.App\.Samples/?\)', '](../samples/index.md)'
     $text = Add-ApiLinks $text
     $front = [ordered]@{ description = $article.Description }
     if ($article.Hero) {
@@ -436,6 +444,16 @@ foreach ($article in $articles) {
         $lines.InsertRange($end, [string[]]@("", "</div>", ""))
         $lines.InsertRange($start, [string[]]@("<div class=""vh-steps"">", ""))
         $text = $lines -join "`n"
+    }
+    foreach ($beside in $article.Beside) {
+        $text = $text -replace "\r\n", "`n"
+        $heading = [regex]::Match($text, "(?m)^## $([regex]::Escape($beside.Heading))\n\n")
+        if (-not $heading.Success) { throw "docs/$($article.File) has no section '$($beside.Heading)' for its picture" }
+        $start = $heading.Index + $heading.Length
+        $end = $text.IndexOf("`n`n", $start)
+        if ($end -lt 0) { $end = $text.Length }
+        $picture = "<a href=""$($beside.Href)""><img class=""vh-step-art"" src=""../$($beside.Art)"" alt=""$(ConvertTo-Html $beside.Alt)""></a> "
+        $text = $text.Insert($end, "`n`n</div>").Insert($start, "<div class=""vh-beside"">`n`n$picture")
     }
     Write-Text (Join-Path $WorkDir "articles/$($article.File)") ((ConvertTo-FrontMatter $front) + $text)
     $articleToc.Add("- name: $($article.Title)"); $articleToc.Add("  href: $($article.File)")
@@ -683,7 +701,7 @@ Write-Text (Join-Path $WorkDir "index.md") ((ConvertTo-FrontMatter $homeFront) +
   <div class="col"><a class="card h-100" href="articles/build-your-app.md">
     <div class="vh-card-visual"><img src="images/card-your-app.svg" alt="An app made from the template under a brand of its own: its connect screen, connected, and its list of locations"></div>
     <div class="card-body"><h2 class="h5 card-title">Build your VPN app</h2>
-    <p class="card-text">Start from the template: a repository that holds only your app, for Android, iOS, Windows and Linux. A Debug build connects to our sample server.</p></div>
+    <p class="card-text">Start from the template: a repository that holds only your app, for Android, iOS, Windows and Linux. A Debug build connects to our test server.</p></div>
   </a></div>
   <div class="col"><a class="card h-100" href="articles/client-architecture.md">
     <div class="vh-card-visual"><img src="images/card-layers.svg" alt="The layers of a VpnHood app, top to bottom: the head you publish, its screens, its logic, the VPN engine and the networking beneath, with the app API and the VPN service contract between them"></div>

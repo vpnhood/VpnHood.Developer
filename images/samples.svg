@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 160" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" role="img" aria-label="The samples: the VPN engine in a console, the app on a phone, and a server">
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8f6ff"/><stop offset="1" stop-color="#e8e0ff"/></linearGradient>
+    <linearGradient id="deep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2190"/><stop offset="1" stop-color="#1c0f45"/></linearGradient>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#c4b6ff" opacity="0.5"/></pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#2a1660" flood-opacity="0.2"/></filter>
+    <filter id="spot" x="-60%" y="-60%" width="220%" height="240%"><feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#2a1660" flood-opacity="0.22"/></filter>
+  </defs>
+  <rect x="2" y="2" width="256" height="156" rx="24" fill="url(#backdrop)"/>
+  <rect x="2" y="2" width="256" height="156" rx="24" fill="url(#dots)"/>
+  <rect x="12" y="12" width="236" height="30" rx="8" fill="url(#deep)" filter="url(#shadow)"/>
+  <text x="26" y="32" font-size="14" font-weight="600" fill="#4af0d2" font-family="Consolas, 'Cascadia Mono', monospace">VpnHood.App.Samples</text>
+  <!-- the VPN engine alone: a console -->
+  <rect x="12" y="52" width="74" height="98" rx="10" fill="#fff" stroke="#e0d8ff" stroke-width="2" filter="url(#spot)"/>
+  <rect x="25" y="66" width="48" height="34" rx="5" fill="url(#deep)"/>
+  <text x="31" y="88" font-size="12" font-weight="700" fill="#4af0d2" font-family="Consolas, 'Cascadia Mono', monospace">$_</text>
+  <path d="M43 104 h12 l2 5 h-16 z" fill="#c9bcff"/>
+  <text x="49" y="134" font-size="12" font-weight="700" fill="#1f1640" text-anchor="middle">Engine</text>
+  <!-- the app under your own screens: a phone -->
+  <rect x="93" y="52" width="74" height="98" rx="10" fill="#fff" stroke="#e0d8ff" stroke-width="2" filter="url(#spot)"/>
+  <rect x="117" y="62" width="26" height="46" rx="6" fill="url(#deep)"/>
+  <circle cx="130" cy="83" r="6.5" fill="none" stroke="#4af0d2" stroke-width="2.2"/>
+  <rect x="124" y="100" width="12" height="2.5" rx="1.25" fill="#c9bcff"/>
+  <text x="130" y="134" font-size="12" font-weight="700" fill="#1f1640" text-anchor="middle">App</text>
+  <!-- a server of your own -->
+  <rect x="174" y="52" width="74" height="98" rx="10" fill="#fff" stroke="#e0d8ff" stroke-width="2" filter="url(#spot)"/>
+  <rect x="187" y="64" width="48" height="19" rx="4" fill="url(#deep)"/>
+  <rect x="187" y="87" width="48" height="19" rx="4" fill="url(#deep)"/>
+  <rect x="194" y="72" width="20" height="3" rx="1.5" fill="#c9bcff"/><circle cx="226" cy="73.5" r="3" fill="#4af0d2"/>
+  <rect x="194" y="95" width="20" height="3" rx="1.5" fill="#c9bcff"/><circle cx="226" cy="96.5" r="3" fill="#4af0d2"/>
+  <text x="211" y="134" font-size="12" font-weight="700" fill="#1f1640" text-anchor="middle">Server</text>
+</svg>
