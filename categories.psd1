@@ -134,7 +134,7 @@
                    Use = @(
                        'You connect to VpnHood servers from your own code, without VpnHood''s app.'
                        'You build an app layer of your own on the engine.'
-                       'To build a whole VPN app, start from VpnHood.AppLib.App or the template instead: they put these together for you.')
+                       'To build a whole VPN app, start from VpnHood.AppLogic.App or the template instead: they put these together for you.')
                    Pick = @(
                        'The engine: Core.Client.'
                        'The VPN service, on the side that runs the engine: Core.Client.VpnServices.Host, with the host for your platform - Android, iOS, Linux, WindowsTun or WindowsVpnPlugin.'
@@ -182,29 +182,29 @@
             )
         }
         @{
-            Key = 'applib'; Folder = 'AppLib'; Title = 'App Logic'; Image = 'images/category-applib.svg'
+            Key = 'applib'; Folder = 'AppLogic'; Title = 'App Logic'; Image = 'images/category-applib.svg'
             Art = 'images/part-applib.svg'
             ImageAlt = 'The app''s core, with its access keys, billing, updates, ads, accounts and settings around it'
             Intro = 'Everything a VPN app does below its screens, the same on every platform. Your app adds the screens and a head for each platform, as the template does.'
             Scenarios = @(
                 @{ Title = 'A VPN app without its screens'
                    Text = 'Connecting, servers and access keys, settings, profiles, accounts and ads, behind the API a UI reads the app through.'
-                   Packages = @('VpnHood.AppLib.App') }
+                   Packages = @('VpnHood.AppLogic.App') }
                 @{ Title = 'Sell premium'
                    Text = 'Billing through Google Play and the App Store, and accounts and web purchases through your portal.'
-                   Packages = @('VpnHood.AppLib.Stores.GooglePlay', 'VpnHood.AppLib.Stores.AppStore', 'VpnHood.AppLib.Portal') }
+                   Packages = @('VpnHood.AppLogic.Stores.GooglePlay', 'VpnHood.AppLogic.Stores.AppStore', 'VpnHood.AppLogic.Portal') }
                 @{ Title = 'Keep it updated'
                    Text = 'Updates from Google Play, the App Store and the Microsoft Store, or a website APK that downloads and installs its own.'
-                   Packages = @('VpnHood.AppLib.Stores.GooglePlay.Core', 'VpnHood.AppLib.Stores.AppStore.Core', 'VpnHood.AppLib.Stores.MicrosoftStore.Core', 'VpnHood.AppLib.Stores.AndroidWeb') }
+                   Packages = @('VpnHood.AppLogic.Stores.GooglePlay.Core', 'VpnHood.AppLogic.Stores.AppStore.Core', 'VpnHood.AppLogic.Stores.MicrosoftStore.Core', 'VpnHood.AppLogic.Stores.AndroidWeb') }
                 @{ Title = 'Show ads'
                    Text = 'AdMob''s app-open, interstitial and rewarded ads, with Google''s consent form.'
-                   Packages = @('VpnHood.AppLib.Ads.AdMob.Android') }
+                   Packages = @('VpnHood.AppLogic.Ads.AdMob.Android') }
                 @{ Title = 'Run on every platform'
                    Text = 'Android, iOS and tvOS, Windows as a service or a VPN plug-in, and Linux as a root service.'
-                   Packages = @('VpnHood.AppLib.App.Android', 'VpnHood.AppLib.App.Ios', 'VpnHood.AppLib.App.WindowsTun', 'VpnHood.AppLib.App.Linux') }
+                   Packages = @('VpnHood.AppLogic.App.Android', 'VpnHood.AppLogic.App.Ios', 'VpnHood.AppLogic.App.WindowsTun', 'VpnHood.AppLogic.App.Linux') }
                 @{ Title = 'Drive the app from anywhere'
                    Text = 'The app''s API over HTTP, for a web UI or a phone paired with the app.'
-                   Packages = @('VpnHood.AppLib.Api', 'VpnHood.AppLib.Api.WebHost', 'VpnHood.AppLib.Api.HttpClients') }
+                   Packages = @('VpnHood.AppLogic.Api', 'VpnHood.AppLogic.Api.WebHost', 'VpnHood.AppLogic.Api.HttpClients') }
             )
             Groups = @(
                 @{ Name = 'Abstraction'; Segment = 'Abstractions'; Abstraction = $true; Art = 'images/group-applib-abstraction.svg'
@@ -219,17 +219,17 @@
                    Use = @(
                        'You build your own VPN app: the template is built on these packages.'
                        'You keep VpnHood''s app logic and bring your own UI.')
-                   Pick = @('AppLib.App on every platform, with your platform''s package: App.Android, App.Ios for iOS and tvOS, App.Linux, App.WindowsTun, or App.WindowsVpnPlugin for an app that runs from an MSIX package.') }
+                   Pick = @('AppLogic.App on every platform, with your platform''s package: App.Android, App.Ios for iOS and tvOS, App.Linux, App.WindowsTun, or App.WindowsVpnPlugin for an app that runs from an MSIX package.') }
                 @{ Name = 'API'; Segment = 'Api'; Art = 'images/group-api.svg'
                    Text = 'The app''s API for any UI, in the same process or over HTTP.'
                    Intro = 'The six interfaces a UI reads the app through, with every shape they carry: state, features, settings and profiles. The app''s web hosts serve them over HTTP, and the HTTP clients answer them from anywhere else.'
                    Use = @(
-                       'You write a UI for the app: it needs AppLib.Api and nothing else of the app.'
+                       'You write a UI for the app: it needs AppLogic.Api and nothing else of the app.'
                        'Your UI runs somewhere else: a paired browser, a WebAssembly head, another app, or a second VpnHood client on the network.')
                    Pick = @(
-                       'AppLib.Api: the interfaces and their shapes.'
-                       'AppLib.Api.WebHost: serve the API, and a web UI''s files, over HTTP.'
-                       'AppLib.Api.HttpClients: reach the app''s web host from somewhere else.') }
+                       'AppLogic.Api: the interfaces and their shapes.'
+                       'AppLogic.Api.WebHost: serve the API, and a web UI''s files, over HTTP.'
+                       'AppLogic.Api.HttpClients: reach the app''s web host from somewhere else.') }
                 @{ Name = 'Stores'; Segment = 'Stores'; Art = 'images/group-stores.svg'
                    Text = 'Billing, sign-in, updates and reviews through Google Play, the App Store and the Microsoft Store.'
                    Intro = 'Each store''s billing, sign-in, updates and in-app reviews for a VpnHood app, and self-updates for an APK handed out outside the stores.'
@@ -252,30 +252,23 @@
             )
         }
         @{
-            Key = 'appui'; Folder = 'AppUi'; Title = 'App UI'; Image = 'images/category-appui.svg'
-            Art = 'images/part-appui.svg'
-            ImageAlt = 'The same app UI on a phone, a desktop and in a browser'
-            Intro = 'The app''s screens and the hosts that run them, from a phone to a desktop service.'
+            Key = 'apphosting'; Folder = 'AppHosting'; Title = 'App Hosting'; Image = 'images/category-apphosting.svg'
+            Art = 'images/part-apphosting.svg'
+            ImageAlt = 'One app UI hosted on a phone, a desktop and in a browser'
+            Intro = 'The hosts that run a UI for the app on each platform, from a phone to a desktop service.'
             Scenarios = @(
                 @{ Title = 'Use the ready UI'
                    Text = 'Host VpnHood''s Avalonia UI on Android, iOS, Windows and Linux, or in a browser.'
-                   Packages = @('VpnHood.AppUi.Hosting.Avalonia', 'VpnHood.AppUi.Hosting.Avalonia.Android', 'VpnHood.AppUi.Hosting.Avalonia.Desktop') }
+                   Packages = @('VpnHood.AppHosting.Avalonia', 'VpnHood.AppHosting.Avalonia.Android', 'VpnHood.AppHosting.Avalonia.Desktop') }
                 @{ Title = 'Install on a desktop'
                    Text = 'The app runs as a machine service, systemd on Linux or a LocalSystem service on Windows, with a window for each person who signs in, and updates itself.'
-                   Packages = @('VpnHood.AppUi.Hosting.Desktop.Daemon', 'VpnHood.AppUi.Hosting.Desktop.Linux', 'VpnHood.AppUi.Hosting.Desktop.WindowsTun') }
-                @{ Title = 'Bring your own UI'
-                   Text = 'Any UI toolkit gets the app''s state, the words of every language, and the text for errors, dates and traffic.'
-                   Packages = @('VpnHood.AppUi.Common') }
+                   Packages = @('VpnHood.AppHosting.Desktop.Daemon', 'VpnHood.AppHosting.Desktop.Linux', 'VpnHood.AppHosting.Desktop.WindowsTun') }
                 @{ Title = 'Web views and MAUI'
                    Text = 'Host a web UI in a native web view on Android, iOS and Windows, or a .NET MAUI UI.'
-                   Packages = @('VpnHood.AppUi.Hosting.WebView', 'VpnHood.AppUi.Hosting.Maui') }
+                   Packages = @('VpnHood.AppHosting.WebView', 'VpnHood.AppHosting.Maui') }
             )
             Groups = @(
-                @{ Name = 'Abstraction'; Segment = 'Common'; Abstraction = $true; Art = 'images/group-appui-abstraction.svg'
-                   Text = 'The app as any UI toolkit sees it: its state, its words and their text.'
-                   Intro = 'The VpnHood app as a UI sees it, for any UI toolkit: the app''s state and API in one place, the words of every language, and the code that turns the app''s state into text - errors, dates, traffic and country names. No toolkit, no theme, no picture.'
-                   Use = @('You write a UI of your own, in Avalonia or another toolkit, and want the app''s state and every language''s words ready to show.') }
-                @{ Name = 'Hosting'; Segment = 'Hosting'; Art = 'images/part-appui.svg'
+                @{ Name = 'Hosting'; Segment = 'AppHosting'; Art = 'images/part-apphosting.svg'
                    Text = 'Run a UI for the app - Avalonia, a web view or MAUI - on a phone, a desktop or in a browser.'
                    Intro = 'What runs a UI for the VpnHood app on each platform: an Avalonia UI on Android, iOS, the desktop and in a browser; a web UI in a native web view; or a .NET MAUI UI. On Windows and Linux the app can run as a machine service, with a window for each person who signs in.'
                    Use = @(
@@ -283,10 +276,30 @@
                        'Your UI is a web app, shown in a native web view.'
                        'You install the app on Windows or Linux as a machine service.')
                    Pick = @(
-                       'Avalonia: Hosting.Avalonia, with Avalonia.Android, Avalonia.Ios, Avalonia.Desktop or Avalonia.Browser.'
-                       'A desktop service and its window: Hosting.Desktop and Desktop.Daemon, with Desktop.Linux, Desktop.WindowsTun or Desktop.WindowsVpnPlugin. Desktop.Abstractions is what a desktop host and its UI agree on.'
-                       'A web view: Hosting.WebView, with WebView.Android, WebView.Ios or WebView.Windows.'
-                       '.NET MAUI: Hosting.Maui, on Android and Windows.') }
+                       'Avalonia: AppHosting.Avalonia, with Avalonia.Android, Avalonia.Ios, Avalonia.Desktop or Avalonia.Browser.'
+                       'A desktop service and its window: AppHosting.Desktop and Desktop.Daemon, with Desktop.Linux, Desktop.WindowsTun or Desktop.WindowsVpnPlugin. Desktop.Abstractions is what a desktop host and its UI agree on.'
+                       'A web view: AppHosting.WebView, with WebView.Android, WebView.Ios or WebView.Windows.'
+                       '.NET MAUI: AppHosting.Maui, on Android and Windows.') }
+            )
+        }
+        @{
+            Key = 'appui'; Folder = 'AppUi'; Title = 'App UI'; Image = 'images/category-appui.svg'
+            Art = 'images/part-appui.svg'
+            ImageAlt = 'The app UI: its look in two themes, and its words in every language'
+            Intro = 'The app''s look and its words: what a person sees, and what any UI toolkit needs from the app.'
+            Scenarios = @(
+                @{ Title = 'Bring your own UI'
+                   Text = 'Any UI toolkit gets the app''s state and its API in one place.'
+                   Packages = @('VpnHood.AppUi.Common') }
+                @{ Title = 'Speak every language'
+                   Text = 'The words of every language the app speaks, right-to-left ones included, and the text for errors, dates, traffic and country names.'
+                   Packages = @('VpnHood.AppUi.Common') }
+            )
+            Groups = @(
+                @{ Name = 'Abstraction'; Segment = 'Common'; Abstraction = $true; Art = 'images/group-appui-abstraction.svg'
+                   Text = 'The app as any UI toolkit sees it: its state, its words and their text.'
+                   Intro = 'The VpnHood app as a UI sees it, for any UI toolkit: the app''s state and API in one place, the words of every language, and the code that turns the app''s state into text - errors, dates, traffic and country names. No toolkit, no theme, no picture.'
+                   Use = @('You write a UI of your own, in Avalonia or another toolkit, and want the app''s state and every language''s words ready to show.') }
             )
         }
     )

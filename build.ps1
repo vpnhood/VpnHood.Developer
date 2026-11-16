@@ -14,7 +14,8 @@ pictures and the categories. The site has four parts:
 
 A package is on the site once its project sets VhApiDocsComplete, the gate that fails its build on a missing doc
 comment, so no undocumented page goes public. VpnHood.Net.Proxies, from its own repo, joins Networking. Packages group
-by their folder (Net, Core, AppLib, AppUi), then by feature: the third segment of their name.
+by their folder (Net, Core, AppLogic, AppHosting, AppUi), then by feature: the third segment of their name, or the
+second for a group that holds a whole layer (AppHosting).
 
 .EXAMPLE
 pwsh ./build.ps1
@@ -43,7 +44,7 @@ $SamplesRoot = (Resolve-Path $SamplesRoot).Path
 $TemplateRoot = (Resolve-Path $TemplateRoot).Path
 $githubBlob = "https://github.com/vpnhood/VpnHood/blob/develop/"
 
-# the four big categories, with their pictures and real-world scenarios
+# the five big categories, with their pictures and real-world scenarios
 $categories = @((Import-PowerShellDataFile (Join-Path $PSScriptRoot "categories.psd1")).Categories | ForEach-Object { [pscustomobject]$_ })
 
 # kept off the site (owner, 2026-11-08); it keeps its doc comments and its NuGet package
@@ -80,6 +81,8 @@ $articles = @(
         Description = "Run VpnHood's server engine in a .NET program of your own, with access keys kept in files: start it, and make a key a client connects with." }
     [pscustomobject]@{ File = "app-startup.md"; Title = "How a VpnHood app starts"
         Description = "How a head starts a VpnHood app: who the app is, its options with its store's providers, and what the host builds from them on Android, iOS, Windows and Linux." }
+    [pscustomobject]@{ File = "connect.md"; Title = "What happens on Connect"
+        Description = "What a VPN app does from a tap on Connect to Connected: finding a server, the hello, the ad and the adapter; what the app shows meanwhile, and why a connect fails." }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
         Description = "A VpnHood app is a head over three layers - the UI, the app's logic and the VPN engine - which meet at two contracts; which part to use for what you build." }
     [pscustomobject]@{ File = "vpn-engine.md"; Title = "How the VPN engine works"
@@ -97,11 +100,14 @@ function Write-Text([string]$path, [string]$text) {
     [IO.File]::WriteAllText($path, $text, [Text.UTF8Encoding]::new($false))
 }
 
-# A package's group (categories.psd1): its category's group whose Segment is the third segment of its name
-# (VpnHood.Net.<Segment>...), so a project stays with the projects under it
+# A package's group (categories.psd1): its category's group whose Segment is the second segment of its name, a whole
+# layer (VpnHood.<Segment>...: AppHosting, in App Hosting), or else the third (VpnHood.Net.<Segment>...), so a project stays
+# with the projects under it
 function Get-Group([string]$name) {
-    $key = "$($categoryOf[$name])|$($name.Split('.')[2])"
-    if ($groupOfSegment.ContainsKey($key)) { return $groupOfSegment[$key] }
+    foreach ($index in 1, 2) {
+        $key = "$($categoryOf[$name])|$($name.Split('.')[$index])"
+        if ($groupOfSegment.ContainsKey($key)) { return $groupOfSegment[$key] }
+    }
     $null
 }
 
@@ -219,7 +225,7 @@ function New-PackagePage($project, [string]$description, $namespaces, $dependsOn
 # --- the packages
 $projects = @(
     foreach ($category in $categories) {
-        foreach ($csproj in Get-ChildItem "$src/$($category.Folder)/*/*.csproj" | Sort-Object Name) {
+        foreach ($csproj in @($category.Folder) | ForEach-Object { Get-ChildItem "$src/$_/*/*.csproj" } | Sort-Object Name) {
             $name = $csproj.BaseName
             if ($excluded -contains $name -or (Read-Text $csproj.FullName) -notmatch "<VhApiDocsComplete>\s*true\s*<") { continue }
             $readme = Join-Path $csproj.DirectoryName "README.md"
@@ -675,8 +681,8 @@ $example = [regex]::Match((Read-Text (Join-Path $src "Net/VpnHood.Net.VpnAdapter
 if (-not $example.Success) { throw "VpnHood.Net.VpnAdapters.WinTun's README has no VpnAdapterWinTun example" }
 $code = [Net.WebUtility]::HtmlEncode((($example.Groups[1].Value -split "\r?\n") |
     Where-Object { $_.Trim() -and $_ -notmatch "^\s*//" } | ForEach-Object { $_ -replace "\s+//\s.*$", "" }) -join "`n")
-# the four parts of VpnHood, each a small card - its small drawing, its name and the first sentence of what it is for -
-# that leads to its section of the API reference's front page, where its picture is: four big pictures made the home
+# the five parts of VpnHood, each a small card - its small drawing, its name and the first sentence of what it is for -
+# that leads to its section of the API reference's front page, where its picture is: five big pictures made the home
 # page too heavy. The drawing is decorative, as the card names its part.
 $parts = foreach ($category in $categories) {
     $first = ($category.Intro -split "(?<=[.!?])\s", 2)[0]
@@ -717,10 +723,10 @@ Write-Text (Join-Path $WorkDir "index.md") ((ConvertTo-FrontMatter $homeFront) +
 
 ## Use any part of VpnHood
 
-Four layers of NuGet packages, from networking libraries that need no VPN to the screens of a finished app. Each part's
+Five layers of NuGet packages, from networking libraries that need no VPN to the screens of a finished app. Each part's
 page says what you can build with it.
 
-<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-3 vh-parts">
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-5 g-3 vh-parts">
 $($parts -join "`n")
 </div>
 

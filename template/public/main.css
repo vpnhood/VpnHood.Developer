@@ -163,7 +163,7 @@
   white-space: pre-wrap;
 }
 
-/* the home page's four parts: a small card each - its drawing, its name and what it is for - leading to its section */
+/* the home page's five parts: a small card each - its drawing, its name and what it is for - leading to its section */
 .vh-parts {
   margin-bottom: 1rem;
 }
@@ -204,7 +204,7 @@
   color: var(--bs-secondary-color);
 }
 
-/* room between the three cards and the heading of the four parts */
+/* room between the three cards and the heading of the five parts */
 .vh-cards + h2 {
   margin-top: 3rem;
 }
