@@ -38,7 +38,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 $vpnHood = (Resolve-Path $VpnHoodRoot).Path
-$src = Join-Path $vpnHood "src"
+$src = Join-Path $vpnHood "src/libs"  # the libraries, one folder per layer: a category's Folder
 $ProxiesRoot = (Resolve-Path $ProxiesRoot).Path
 $SamplesRoot = (Resolve-Path $SamplesRoot).Path
 $TemplateRoot = (Resolve-Path $TemplateRoot).Path

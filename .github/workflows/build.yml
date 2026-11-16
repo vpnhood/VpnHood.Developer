@@ -42,7 +42,7 @@ jobs:
       # The look's package (VpnHood.AppUi.Assets.Classic) is a submodule that the UI hosts reference.
       - name: Check out VpnHood's asset submodule
         working-directory: VpnHood
-        run: git submodule update --init --depth 1 src/AppUi/VpnHood.AppUi.Assets.Classic
+        run: git submodule update --init --depth 1 src/libs/AppUi/VpnHood.AppUi.Assets.Classic
       - uses: actions/checkout@v7
         with:
           repository: vpnhood/VpnHood.Net.Proxies
