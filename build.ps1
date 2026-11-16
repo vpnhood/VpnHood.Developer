@@ -84,7 +84,7 @@ $articles = @(
     [pscustomobject]@{ File = "connect.md"; Title = "What happens on Connect"
         Description = "What a VPN app does from a tap on Connect to Connected: finding a server, the hello, the ad and the adapter; what the app shows meanwhile, and why a connect fails." }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
-        Description = "A VpnHood app is a head over three layers - the UI, the app's logic and the VPN engine - which meet at two contracts; which part to use for what you build." }
+        Description = "A VpnHood app is a head over five layers - the UI, its host, the app's logic, the VPN engine and networking - which meet at two contracts; which part to use for what you build." }
     [pscustomobject]@{ File = "vpn-engine.md"; Title = "How the VPN engine works"
         Description = "How VpnHood's VPN engine takes the adapter the platform makes, and how each packet travels between the adapter, the tunnel and the server." }
 )
@@ -710,9 +710,9 @@ Write-Text (Join-Path $WorkDir "index.md") ((ConvertTo-FrontMatter $homeFront) +
     <p class="card-text">Start from the template: a repository that holds only your app, for Android, iOS, Windows and Linux. A Debug build connects to our test server.</p></div>
   </a></div>
   <div class="col"><a class="card h-100" href="articles/client-architecture.md">
-    <div class="vh-card-visual"><img src="images/card-layers.svg" alt="The layers of a VpnHood app, top to bottom: the head you publish, its screens, its logic, the VPN engine and the networking beneath, with the app API and the VPN service contract between them"></div>
+    <div class="vh-card-visual"><img src="images/card-layers.svg" alt="The layers of a VpnHood app, top to bottom: the head you publish, its look and words, the host that runs them on each platform, its logic, the VPN engine and the networking beneath, with the app API and the VPN service contract between them"></div>
     <div class="card-body"><h2 class="h5 card-title">VpnHood Client Architecture</h2>
-    <p class="card-text">A head over three layers, the UI, the app's logic and the VPN engine, which meet at two contracts. Replace any layer on its own.</p></div>
+    <p class="card-text">A head over five layers, from its UI and the host that runs it to the VPN engine and networking, which meet at two contracts. Replace any layer on its own.</p></div>
   </a></div>
   <div class="col"><a class="card h-100" href="libraries/index.md#networking">
     <div class="vh-card-visual vh-card-code"><pre><code class="lang-csharp">$code</code></pre></div>
