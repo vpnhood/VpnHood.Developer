@@ -464,6 +464,19 @@ article img[src$="/screenshot.png"][width] {
   }
 }
 
+/* An API page's member lists, as Inherited Members, hold names with no space in them, such as
+   TunVpnAdapter.SendPacketsAsync(IReadOnlyList<IpPacket>): on a phone, 38 pages ran past the screen's right edge. A
+   name breaks where it must. DocFX's own .xref rule (break-word) leaves each entry's box as wide as the whole name, so
+   the links are named too; a long link in a paragraph breaks as well. */
+article dd,
+article dd .xref {
+  overflow-wrap: anywhere;
+}
+
+article p {
+  overflow-wrap: break-word;
+}
+
 /* a guide's steps (Build your VPN app): a numbered circle on a line, the step's title, and its picture beside its text;
    on a phone, the picture above it */
 .vh-steps > ol {

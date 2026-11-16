@@ -332,7 +332,25 @@ foreach ($file in Get-ChildItem $apiMain -Filter *.yml) {
         if (-not $namespacesOf.ContainsKey($assemblyName)) { $namespacesOf[$assemblyName] = [Collections.Generic.HashSet[string]]::new() }
         [void]$namespacesOf[$assemblyName].Add($namespaceName)
     }
-    Copy-Item $file.FullName $api
+    # A member that overrides Android's takes its docs, whose HTML sits on indented lines, which DocFX's Markdown reads
+    # as a code block: the page showed the raw HTML. Each link to the Android reference becomes one plain link, and a
+    # paragraph or an example (<p>, <pre>) after a blank line moves to the text's own indent, where Markdown takes it
+    # for HTML.
+    $fixed = [regex]::Replace($text,
+        '<format type="text/html">\s*<a href="([^"]+)" title="Reference documentation">([^<]*?)\s*<pre><code class="lang-csharp">([^<]+)</code></pre>\s*\.</a>\s*</format>',
+        '<a href="$1">$2 <code>$3</code></a>.')
+    $fixed = [regex]::Replace($fixed, '(?m)(?<=^[ \t]*\r?\n) {5,}(?=<(p|pre)\b)', '    ')
+    # A type's inherited members are listed only from VpnHood's own classes (owner, 2026-11-15: "Do we really need to
+    # link all of those base classes from Microsoft and so on? Can we hide them?"): 92% came from .NET, Android, iOS and
+    # other outside libraries, as object.Equals on every page and hundreds of Android Context methods, each a link away
+    # from this site. The Inheritance line still names and links each base class.
+    $fixed = [regex]::Replace($fixed, '(?m)^  inheritedMembers:\r?\n((?:  - .*\r?\n)+)', {
+        param($match)
+        $own = @($match.Groups[1].Value -split '\r?\n' | Where-Object { $_.StartsWith("  - VpnHood.") })
+        if ($own.Count -eq 0) { return "" }
+        "  inheritedMembers:`n" + (($own | ForEach-Object { "$_`n" }) -join "")
+    })
+    if ($fixed -ne $text) { Write-Text (Join-Path $api $file.Name) $fixed } else { Copy-Item $file.FullName $api }
 }
 
 # the generated TOC's top-level blocks, by uid
