@@ -32,7 +32,8 @@ VpnHood! MANAGER API, whose repository is private.
 `categories.psd1` holds the five big categories (Networking, VPN Core, App Logic, App Hosting, App UI): what each is for, its
 picture, and its real-world scenarios. The home page shows each as a card, and the API reference's front page as a
 section with its scenarios. `images/` holds the site's pictures; a picture of an app made from the template shows a
-made-up brand, never one of VpnHood's own apps.
+made-up brand, never one of VpnHood's own apps. `manager-icon.svg`, MANAGER's icon on its guide and its home page
+section, comes from the same artwork export as the site's icons below: replace it from a new export.
 
 ## When it builds
 

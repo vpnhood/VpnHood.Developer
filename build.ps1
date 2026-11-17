@@ -719,6 +719,9 @@ $managerGuide = Add-Steps $managerGuide @(
     @{ Art = "images/step-manager-role.svg"; Alt = "The bot's role: AccessTokenWriter, chosen over ProjectReader and ProjectWriter" }
     @{ Art = "images/step-manager-call.svg"; Alt = "A request with curl, the bot's key in its Authorization header, and the answer: 200 OK with the server farms" }
 ) "manager-api/index.md"
+# MANAGER's icon above the guide's title, as a product's page has it; the Markdown copy goes without, as it says nothing
+$managerGuide = [regex]::new('(?m)^# ').Replace($managerGuide,
+    '<img class="vh-product-icon" src="../images/manager-icon.svg" alt="" width="72" height="72">' + "`n`n# ", 1)
 # no API links: its code names are the REST API's, not the .NET packages'
 Write-Text (Join-Path $managerDir "index.md") $managerGuide
 foreach ($file in "reference.md", "reference.js", "toc.yml") { Copy-Item (Join-Path $managerSource $file) $managerDir }
@@ -811,7 +814,7 @@ $($parts -join "`n")
 
 ## Run your servers from code
 
-<div class="vh-category-hero"><div class="vh-category-text"><p class="vh-category-intro">VpnHood! MANAGER runs your VPN servers and gives out the access keys people connect with. Its REST API lets your billing system give each customer a key, and your scripts add servers and read usage.</p><p><a href="manager-api/index.md">Call the MANAGER API</a>&nbsp;·&nbsp;<a href="manager-api/reference.md">Its reference</a></p></div><img class="vh-category-image" src="images/card-manager-api.svg" alt="A billing system's bot creates an access key with one request to the MANAGER API, and an app connects with it to the project's servers"></div>
+<div class="vh-category-hero"><div class="vh-category-text"><img class="vh-product-icon" src="images/manager-icon.svg" alt="" width="56" height="56"><p class="vh-category-intro">VpnHood! MANAGER runs your VPN servers and gives out the access keys people connect with. Its REST API lets your billing system give each customer a key, and your scripts add servers and read usage.</p><p><a href="manager-api/index.md">Call the MANAGER API</a>&nbsp;·&nbsp;<a href="manager-api/reference.md">Its reference</a></p></div><img class="vh-category-image" src="images/card-manager-api.svg" alt="A billing system's bot creates an access key with one request to the MANAGER API, and an app connects with it to the project's servers"></div>
 
 <p class="vh-explore">Looking for a type? Search at the top of the page, or open the <a href="api/index.md">API reference</a>. The source is on <a href="https://github.com/vpnhood/VpnHood">GitHub</a>, and every package is on <a href="https://www.nuget.org/profiles/VpnHood">NuGet</a>.</p>
 "@)

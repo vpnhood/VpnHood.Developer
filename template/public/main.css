@@ -247,6 +247,21 @@
   font-size: 1.05rem;
 }
 
+/* a product's icon above its page's title, and at the start of its section on the home page; its corners round as
+   the apps' and the panel's do */
+.vh-product-icon {
+  display: block;
+  width: 4.5rem;
+  height: 4.5rem;
+  margin: 0 0 0.75rem;
+  border-radius: 30%;
+}
+
+.vh-category-text .vh-product-icon {
+  width: 3.5rem;
+  height: 3.5rem;
+}
+
 /* beside the text at a fixed width; on a phone, above it */
 .vh-category-image {
   flex: 0 0 19rem;
