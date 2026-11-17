@@ -194,6 +194,29 @@ function Add-ApiLinks([string]$markdown) {
     $lines -join "`n"
 }
 
+# A page's steps: its first numbered list, each item with its picture and its bold lead as the step's title (owner,
+# 2026-11-13: "can you work on presentation of the items 1,2,3 here")
+function Add-Steps([string]$text, $steps, [string]$name) {
+    $lines = [Collections.Generic.List[string]]::new([string[]]($text -split "\r?\n"))
+    $start = -1
+    for ($i = 0; $i -lt $lines.Count; $i++) { if ($lines[$i] -match '^1\. ') { $start = $i; break } }
+    if ($start -lt 0) { throw "$name has no numbered list for its steps" }
+    $count = 0; $end = $lines.Count
+    for ($i = $start; $i -lt $lines.Count; $i++) {
+        if ($lines[$i] -match '^\d+\. ') {
+            if ($count -ge $steps.Count) { throw "$name has more steps than pictures" }
+            $step = $steps[$count++]
+            $rest = $lines[$i].Substring($Matches[0].Length) -replace '^\*\*(.+?)\.\*\*', '**$1**'
+            $lines[$i] = $Matches[0] + "<img class=""vh-step-art"" src=""../$($step.Art)"" alt=""$(ConvertTo-Html $step.Alt)""> " + $rest
+        }
+        elseif ($lines[$i] -and $lines[$i] -notmatch '^\s') { $end = $i; break }
+    }
+    if ($count -ne $steps.Count) { throw "$name has $count steps for $($steps.Count) pictures" }
+    $lines.InsertRange($end, [string[]]@("", "</div>", ""))
+    $lines.InsertRange($start, [string[]]@("<div class=""vh-steps"">", ""))
+    $lines -join "`n"
+}
+
 function Invoke-Docfx([string[]]$arguments) {
     Push-Location $PSScriptRoot  # where the tool manifest is
     try {
@@ -264,7 +287,7 @@ if ($ungrouped) { Write-Warning "packages in no group of categories.psd1: $($ung
 
 # --- the work folder: generated parts gone, the fixed parts copied in
 New-Item -ItemType Directory -Force $WorkDir | Out-Null
-$generated = @("libraries", "articles", "samples", "api", "_site", "images", "template", "index.md", "toc.yml", "docfx.json", "filterConfig.yml", "robots.txt")
+$generated = @("libraries", "articles", "samples", "api", "manager-api", "_site", "images", "template", "index.md", "toc.yml", "docfx.json", "filterConfig.yml", "robots.txt")
 if (-not $SkipMetadata) { $generated += "api-main" }
 foreach ($item in $generated) {
     $path = Join-Path $WorkDir $item
@@ -412,6 +435,9 @@ foreach ($category in $categories) {
 }
 Write-Text (Join-Path $WorkDir "libraries/toc.yml") (($libraryToc -join "`n") + "`n")
 
+# a page's text before the site's own markup (its banner, its steps' pictures), for its Markdown copy (llms.txt below)
+$plainText = @{}
+
 # --- the articles: the allow-list's pages, a link to any other page of the repo sent to its copy on GitHub
 $listed = @{}
 foreach ($article in $articles) { $listed["docs/$($article.File)"] = $article.File }
@@ -437,6 +463,7 @@ foreach ($article in $articles) {
     # build-your-app.html")
     $text = $text -replace '\]\(https://github\.com/vpnhood/VpnHood\.App\.Samples/?\)', '](../samples/index.md)'
     $text = Add-ApiLinks $text
+    $plainText["articles/$($article.File)"] = $text
     $front = [ordered]@{ description = $article.Description }
     if ($article.Hero) {
         # the banner holds the page's title, so the page goes without its own
@@ -447,28 +474,7 @@ foreach ($article in $articles) {
         $front["title"] = $title.Groups[1].Value
         Add-Hero $front $title.Groups[1].Value $article.Hero
     }
-    # the page's steps: its first numbered list, each item with its picture and its bold lead as the step's title
-    # (owner, 2026-11-13: "can you work on presentation of the items 1,2,3 here")
-    if ($article.Steps) {
-        $lines = [Collections.Generic.List[string]]::new([string[]]($text -split "\r?\n"))
-        $start = -1
-        for ($i = 0; $i -lt $lines.Count; $i++) { if ($lines[$i] -match '^1\. ') { $start = $i; break } }
-        if ($start -lt 0) { throw "docs/$($article.File) has no numbered list for its steps" }
-        $count = 0; $end = $lines.Count
-        for ($i = $start; $i -lt $lines.Count; $i++) {
-            if ($lines[$i] -match '^\d+\. ') {
-                if ($count -ge $article.Steps.Count) { throw "docs/$($article.File) has more steps than pictures" }
-                $step = $article.Steps[$count++]
-                $rest = $lines[$i].Substring($Matches[0].Length) -replace '^\*\*(.+?)\.\*\*', '**$1**'
-                $lines[$i] = $Matches[0] + "<img class=""vh-step-art"" src=""../$($step.Art)"" alt=""$(ConvertTo-Html $step.Alt)""> " + $rest
-            }
-            elseif ($lines[$i] -and $lines[$i] -notmatch '^\s') { $end = $i; break }
-        }
-        if ($count -ne $article.Steps.Count) { throw "docs/$($article.File) has $count steps for $($article.Steps.Count) pictures" }
-        $lines.InsertRange($end, [string[]]@("", "</div>", ""))
-        $lines.InsertRange($start, [string[]]@("<div class=""vh-steps"">", ""))
-        $text = $lines -join "`n"
-    }
+    if ($article.Steps) { $text = Add-Steps $text $article.Steps "docs/$($article.File)" }
     foreach ($beside in $article.Beside) {
         $text = $text -replace "\r\n", "`n"
         $heading = [regex]::Match($text, "(?m)^## $([regex]::Escape($beside.Heading))\n\n")
@@ -692,6 +698,40 @@ foreach ($category in $categories) {
 }
 Write-Text (Join-Path $api "index.md") (($apiFront -join "`n") + "`n")
 
+# --- the MANAGER API (the MANAGER plan's task 38, owner, 2026-11-16: "do all of the other recommendation"): its guide,
+# its reference and its description. The MANAGER's repository is private, so this repository keeps what the site shows
+# of it: the guide's text, and copies of the API's description and of the guide's requests with their answers, which the
+# MANAGER's tests make (tools/update-manager-api.ps1). Each example in the guide is a test's request, never hand-written.
+$managerSource = Join-Path $PSScriptRoot "manager-api"
+$managerDir = Join-Path $WorkDir "manager-api"
+$managerExamples = (Get-Content (Join-Path $managerSource "examples.json") -Raw | ConvertFrom-Json).examples
+$managerGuide = [regex]::Replace((Read-Text (Join-Path $managerSource "index.md")), '(?m)^<!-- example: ([a-z0-9-]+) -->\r?$', {
+    param($match)
+    $example = $managerExamples | Where-Object name -eq $match.Groups[1].Value
+    if (-not $example) { throw "manager-api/examples.json has no example '$($match.Groups[1].Value)': run tools/update-manager-api.ps1" }
+    $block = '```bash' + "`n" + $example.request + "`n" + '```'
+    if ($example.response) { $block += "`n`nThe answer:`n`n" + '```json' + "`n" + $example.response + "`n" + '```' }
+    $block
+})
+$plainText["manager-api/index.md"] = $managerGuide
+$managerGuide = Add-Steps $managerGuide @(
+    @{ Art = "images/step-manager-bot.svg"; Alt = "Team in the panel: Add Bot adds a bot, and the panel shows its API key once" }
+    @{ Art = "images/step-manager-role.svg"; Alt = "The bot's role: AccessTokenWriter, chosen over ProjectReader and ProjectWriter" }
+    @{ Art = "images/step-manager-call.svg"; Alt = "A request with curl, the bot's key in its Authorization header, and the answer: 200 OK with the server farms" }
+) "manager-api/index.md"
+# no API links: its code names are the REST API's, not the .NET packages'
+Write-Text (Join-Path $managerDir "index.md") $managerGuide
+foreach ($file in "reference.md", "reference.js", "toc.yml", "openapi.json") { Copy-Item (Join-Path $managerSource $file) $managerDir }
+
+# Scalar shows the reference: its browser bundle, at a pinned version, checked against its hash and served from this
+# site, so a reader's browser asks no one else for it. To move to another version, set both and check reference.js's
+# options against the new one's.
+$scalarVersion = "1.79.0"
+$scalarSha256 = "77DC08FADDA089AFC186306E8D742EC6340A5A0A0132261D0C595856649A2681"
+$scalar = Join-Path $managerDir "scalar.js"
+Invoke-WebRequest "https://cdn.jsdelivr.net/npm/@scalar/api-reference@$scalarVersion/dist/browser/standalone.js" -OutFile $scalar
+if ((Get-FileHash $scalar -Algorithm SHA256).Hash -ne $scalarSha256) { throw "Scalar $scalarVersion's bundle is not the one pinned" }
+
 # --- the home page: where to start, not a list. The code is Net.VpnAdapters.WinTun's README example, which the tests
 # compile, without the comments the README keeps, so it fits its card; a blank line would end the HTML block it sits
 # in, so it has none.
@@ -709,7 +749,7 @@ $parts = foreach ($category in $categories) {
         "<span class=""vh-part-title"">$(ConvertTo-Html $category.Title)</span><span class=""vh-part-text"">$(ConvertTo-Html $first)</span></a></div>"
 }
 $homeFront = [ordered]@{ _layout = "landing"; title = "VpnHood for developers"
-    description = "Build your own VPN app for Android, iOS, Windows and Linux, or use VpnHood's open-source .NET packages in yours: guides, a page for every package, and the API reference." }
+    description = "Build your own VPN app for Android, iOS, Windows and Linux, use VpnHood's open-source .NET packages in yours, or run your servers from code with the VpnHood! MANAGER API." }
 # the forge's left side, four tenths of it, is an empty wall kept for the copy, so the forge takes the banner's whole
 # width, its top kept, and no more: zoomed closer, the 4:1 banner only crops it differently (owner, 2026-11-14: "don't
 # zoom it"); on a phone the scene's right side, where the work is
@@ -748,6 +788,10 @@ page says what you can build with it.
 $($parts -join "`n")
 </div>
 
+## Run your servers from code
+
+<div class="vh-category-hero"><div class="vh-category-text"><p class="vh-category-intro">VpnHood! MANAGER runs your VPN servers and gives out the access keys people connect with. Its REST API lets your billing system give each customer a key, and your scripts add servers and read usage.</p><p><a href="manager-api/index.md">Call the MANAGER API</a>&nbsp;·&nbsp;<a href="manager-api/reference.md">Its reference</a></p></div><img class="vh-category-image" src="images/card-manager-api.svg" alt="A billing system's bot creates an access key with one request to the MANAGER API, and an app connects with it to the project's servers"></div>
+
 <p class="vh-explore">Looking for a type? Search at the top of the page, or open the <a href="api/index.md">API reference</a>. The source is on <a href="https://github.com/vpnhood/VpnHood">GitHub</a>, and every package is on <a href="https://www.nuget.org/profiles/VpnHood">NuGet</a>.</p>
 "@)
 
@@ -762,4 +806,73 @@ foreach ($page in Get-ChildItem $site -Filter index.html -Recurse) {
 }
 $sitemap = Join-Path $site "sitemap.xml"
 if (Test-Path $sitemap) { Write-Text $sitemap ((Read-Text $sitemap) -replace "/index\.html</loc>", "/</loc>") }
+
+# --- for AI tools (owner, 2026-11-16: "do all of the other recommendation"): llms.txt, an index of the site in Markdown
+# (llmstxt.org), a Markdown copy of each page it lists at the page's address with .md, and llms-full.txt, those pages in
+# one file, so an agent reads the site in a request or two instead of crawling its HTML. The API reference's pages stay
+# HTML only: the same doc comments ship in the NuGet packages, where an agent reads them anyway.
+$xrefs = @{}; $uid = $null
+foreach ($line in [IO.File]::ReadAllLines((Join-Path $site "xrefmap.yml"))) {
+    if ($line -match '^- uid: (.+)$') { $uid = $Matches[1].Trim() }
+    elseif ($line -match '^  href: (.+)$' -and $uid) { $xrefs[$uid] = $Matches[1].Trim() }
+}
+
+# a page's title, description and text as plain Markdown: the text from before the site's own markup where it had any,
+# no front matter, its title as its heading, and its links to the API reference as plain addresses
+function Read-Page([string]$path) {
+    $generated = (Read-Text (Join-Path $WorkDir $path)) -replace "\r\n", "`n"
+    $frontMatter = '^---\n(.*?)\n---\n+'
+    $front = @{}
+    $match = [regex]::Match($generated, $frontMatter, "Singleline")
+    foreach ($line in $match.Groups[1].Value -split "`n") {
+        if ($line -match '^(\w+):\s*(.*)$') { $front[$Matches[1]] = ($Matches[2] -replace "^'(.*)'$", '$1') -replace "''", "'" }
+    }
+    $text = ($plainText[$path] ?? $generated) -replace "\r\n", "`n"
+    $text = [regex]::Replace($text, $frontMatter, "", "Singleline")
+    # the browser's title where the page has one, as a group's names its category ("Abstraction - App Logic")
+    $heading = [regex]::Match($text, '(?m)^# (.+)$')
+    $title = $front["title"] ?? $heading.Groups[1].Value
+    if (-not $heading.Success) { $text = "# $title`n`n$text" }
+    $text = [regex]::Replace($text, '\]\(xref:([^)\s]+)\)', { param($m) "]($BaseUrl$($xrefs[$m.Groups[1].Value] ?? 'api/index.html'))" })
+    $text = [regex]::Replace($text, '<xref:([^>\s]+)>', { param($m) "[$($m.Groups[1].Value)]($BaseUrl$($xrefs[$m.Groups[1].Value] ?? 'api/index.html'))" })
+    [pscustomobject]@{ Path = $path; Title = $title; Description = $front["description"]; Text = $text.Trim() + "`n" }
+}
+
+# the libraries' pages in the site's order: by category, each group's page before the packages'
+$libraryPages = @(foreach ($category in $categories) {
+    Get-ChildItem (Join-Path $WorkDir "libraries/$($category.Key)") -Filter *.md -ErrorAction SilentlyContinue |
+        Sort-Object Name | ForEach-Object { "libraries/$($category.Key)/$($_.Name)" }
+})
+$sections = [ordered]@{
+    "Start here" = @($articles | ForEach-Object { Read-Page "articles/$($_.File)" })
+    "VpnHood! MANAGER API" = @(Read-Page "manager-api/index.md")
+    "Samples and templates" = @(@("samples/index.md") + @($sampleNames | ForEach-Object { "samples/$_.md" }) | ForEach-Object { Read-Page $_ })
+    "Libraries" = @(@("libraries/index.md") + @($libraryPages | Where-Object { $_ -notmatch '/VpnHood\.[^/]*\.md$' }) | ForEach-Object { Read-Page $_ })
+    "Packages" = @($libraryPages | Where-Object { $_ -match '/VpnHood\.[^/]*\.md$' } | ForEach-Object { Read-Page $_ })
+}
+
+$index = [Collections.Generic.List[string]]::new()
+$index.Add("# VpnHood for developers"); $index.Add("")
+$index.Add("> The simplest way to build a VPN app or reuse a part of one: an app template for Android, iOS, Windows and Linux, " +
+    "VpnHood's open-source .NET packages, and the VpnHood! MANAGER API, which runs VPN servers and gives out access keys.")
+$index.Add("")
+$index.Add("Each page below is Markdown at the address given; llms-full.txt holds them all in one file. Every package is on " +
+    "NuGet with its doc comments, and the template's AGENTS.md says where each change to an app goes.")
+$full = [Collections.Generic.List[string]]::new()
+foreach ($section in $sections.Keys) {
+    $index.Add(""); $index.Add("## $(if ($section -eq 'Packages') { 'Optional' } else { $section })"); $index.Add("")
+    foreach ($page in $sections[$section]) {
+        Write-Text (Join-Path $site $page.Path) $page.Text
+        $index.Add("- [$($page.Title)]($BaseUrl$($page.Path))$(if ($page.Description) { ": $($page.Description)" })")
+        $full.Add("<!-- $BaseUrl$($page.Path) -->`n`n$($page.Text)")
+    }
+    if ($section -eq "VpnHood! MANAGER API") {
+        $index.Add("- [The API's description]($($BaseUrl)manager-api/openapi.json): every operation, parameter and field, in OpenAPI 3.1")
+    }
+}
+$index.Add("- [API reference]($($BaseUrl)api/index.html): every public type and member of the packages, in HTML")
+$index.Add("- [VpnHood.App.Template](https://github.com/vpnhood/VpnHood.App.Template): the app to start from; its AGENTS.md is for coding agents")
+$index.Add("- [VpnHood on GitHub](https://github.com/vpnhood/VpnHood): the source")
+Write-Text (Join-Path $site "llms.txt") (($index -join "`n") + "`n")
+Write-Text (Join-Path $site "llms-full.txt") (($full -join "`n---`n`n") + "`n")
 Write-Host "Built: $site"

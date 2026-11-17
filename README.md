@@ -2,7 +2,8 @@
 
 The source of [developer.vpnhood.com](https://developer.vpnhood.com): its look, its pictures, and the script that
 builds it with [DocFX](https://dotnet.github.io/docfx/). The text is not here: each part is read from where it is
-written, in [VpnHood](https://github.com/vpnhood/VpnHood), so nothing is written twice.
+written, in [VpnHood](https://github.com/vpnhood/VpnHood), so nothing is written twice. The one exception is the
+VpnHood! MANAGER API, whose repository is private.
 
 - **Start here:** the pages `build.ps1` lists in `$articles`, from VpnHood's `docs/`. Only those: the rest of `docs/`
   is maintainers' notes, not product documentation.
@@ -13,6 +14,16 @@ written, in [VpnHood](https://github.com/vpnhood/VpnHood), so nothing is written
 - **Libraries:** each package's `README.md`, or, for a package without one, a page made from its project.
 - **API reference:** the doc comments of every package whose project sets `VhApiDocsComplete`, the gate that fails
   its build on a missing comment, plus VpnHood.Net.Proxies from its own repo.
+- **MANAGER API:** `manager-api/`. Its guide, `index.md`, is written here; each `<!-- example: name -->` in it becomes
+  a request and its answer from `examples.json`. The reference, `reference.md`, shows `openapi.json` with
+  [Scalar](https://github.com/scalar/scalar), whose bundle `build.ps1` fetches at a pinned version and checks against
+  its hash, so the site serves it itself; `reference.js` turns off everything of Scalar's that would reach a third
+  party. `openapi.json` and `examples.json` are copies of what the MANAGER's tests make: after a change to its API, run
+  `pwsh ./tools/update-manager-api.ps1` beside a clone of VpnHood.Manager. It copies nothing unless the tests pass: one
+  fails when a name of the API has no description, the other makes the guide's requests as a bot.
+- **For AI tools:** after the build, `llms.txt` indexes the guides, samples, libraries and the MANAGER API
+  ([llmstxt.org](https://llmstxt.org)), each page has a Markdown copy at its address with `.md`, and `llms-full.txt`
+  holds them all in one file.
 
 `categories.psd1` holds the five big categories (Networking, VPN Core, App Logic, App Hosting, App UI): what each is for, its
 picture, and its real-world scenarios. The home page shows each as a card, and the API reference's front page as a

@@ -4,10 +4,10 @@
   "build": {
     "content": [
       { "files": [ "api/**.yml" ] },
-      { "files": [ "index.md", "toc.yml", "articles/**.md", "articles/toc.yml", "samples/**.md", "samples/toc.yml", "libraries/**.md", "libraries/toc.yml", "api/index.md" ] }
+      { "files": [ "index.md", "toc.yml", "articles/**.md", "articles/toc.yml", "samples/**.md", "samples/toc.yml", "libraries/**.md", "libraries/toc.yml", "api/index.md", "manager-api/*.md", "manager-api/toc.yml" ] }
     ],
     "resource": [
-      { "files": [ "images/**", "samples/*/**", "robots.txt" ] }
+      { "files": [ "images/**", "samples/*/**", "robots.txt", "manager-api/openapi.json", "manager-api/*.js" ] }
     ],
     "output": "_site",
     "template": [ "default", "modern", "template" ],
@@ -17,7 +17,7 @@
       "_appName": "VpnHood! Developer",
       "_appTitle": "VpnHood! Developer",
       "_appLogoPath": "images/logo.png",
-      "_appFooter": "<span>© OmegaHood LLC · <a href=\"https://github.com/vpnhood/VpnHood\">VpnHood on GitHub</a> · <a href=\"https://www.vpnhood.com\">www.vpnhood.com</a></span>",
+      "_appFooter": "<span>© OmegaHood LLC · <a href=\"https://github.com/vpnhood/VpnHood\">VpnHood on GitHub</a> · <a href=\"https://www.vpnhood.com\">www.vpnhood.com</a> · <a href=\"/llms.txt\">llms.txt for AI tools</a></span>",
       "_lang": "en",
       "_enableSearch": true,
       "_disableContribution": true,

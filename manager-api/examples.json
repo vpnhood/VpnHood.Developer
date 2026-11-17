@@ -1,0 +1,34 @@
+{
+  "examples": [
+    {
+      "name": "list-server-farms",
+      "request": "curl \"https://api.vpnhood.com/api/projects/$PROJECT_ID/server-farms\" \\\n  -H \"Authorization: $VH_API_KEY\"",
+      "response": "[\r\n  {\r\n    \"serverFarm\": {\r\n      \"serverFarmId\": \"01a1e6bb-04a9-7b7d-8764-a0c57486f02a\",\r\n      \"serverFarmName\": \"Server Farm 1\",\r\n      \"serverProfileName\": \"(Default)\"\r\n    }\r\n  }\r\n]"
+    },
+    {
+      "name": "list-access-key-profiles",
+      "request": "curl \"https://api.vpnhood.com/api/projects/$PROJECT_ID/access-token-profiles\" \\\n  -H \"Authorization: $VH_API_KEY\"",
+      "response": "[\r\n  {\r\n    \"accessTokenProfileId\": \"2\",\r\n    \"accessTokenProfileName\": \"Private Profile\",\r\n    \"isPublic\": false,\r\n    \"maxTotalTrafficMb\": null,\r\n    \"lifetime\": 0,\r\n    \"maxDevice\": 5\r\n  },\r\n  {\r\n    \"accessTokenProfileId\": \"1\",\r\n    \"accessTokenProfileName\": \"Public Profile\",\r\n    \"isPublic\": true,\r\n    \"maxTotalTrafficMb\": null,\r\n    \"lifetime\": 0,\r\n    \"maxDevice\": 0\r\n  }\r\n]"
+    },
+    {
+      "name": "create-access-key",
+      "request": "curl -X POST \"https://api.vpnhood.com/api/projects/$PROJECT_ID/access-tokens\" \\\n  -H \"Authorization: $VH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @- <<EOF\n{\n  \"serverFarmId\": \"$FARM_ID\",\n  \"accessTokenProfileId\": \"$PROFILE_ID\",\n  \"accessTokenName\": \"Customer 1001\",\n  \"customerId\": \"1001\"\n}\nEOF",
+      "response": "[\r\n  {\r\n    \"accessTokenId\": \"01a1e6bb-0b3c-7fd3-bedb-9f17b92b001b\",\r\n    \"accessTokenName\": \"Customer 1001\",\r\n    \"accessTokenProfileName\": \"Private Profile\",\r\n    \"supportCode\": 1002,\r\n    \"serverFarmName\": \"Server Farm 1\",\r\n    \"expirationTime\": null,\r\n    \"isEnabled\": true,\r\n    \"customerId\": \"1001\"\r\n  }\r\n]"
+    },
+    {
+      "name": "get-access-key",
+      "request": "curl \"https://api.vpnhood.com/api/projects/$PROJECT_ID/access-tokens/$KEY_ID/access-key\" \\\n  -H \"Authorization: $VH_API_KEY\"",
+      "response": "\"vh:eyJ2Ijo0LCJuYW1lIjoiQ3VzdG9tZXIgMTAwMSIsInNpZCI6IjEwMDIiL…\""
+    },
+    {
+      "name": "get-access-key-usage",
+      "request": "curl \"https://api.vpnhood.com/api/projects/$PROJECT_ID/access-tokens/$KEY_ID?usageBeginTime=$SINCE\" \\\n  -H \"Authorization: $VH_API_KEY\"",
+      "response": "{\r\n  \"accessToken\": {\r\n    \"accessTokenId\": \"01a1e6bb-0b3c-7fd3-bedb-9f17b92b001b\",\r\n    \"firstUsedTime\": \"2026-11-16T23:39:40Z\",\r\n    \"lastUsedTime\": \"2026-11-16T23:39:40Z\",\r\n    \"isEnabled\": true\r\n  },\r\n  \"usage\": {\r\n    \"sentTraffic\": 52000000,\r\n    \"receivedTraffic\": 840000000,\r\n    \"deviceCount\": 1\r\n  }\r\n}"
+    },
+    {
+      "name": "disable-access-key",
+      "request": "curl -X PATCH \"https://api.vpnhood.com/api/projects/$PROJECT_ID/access-tokens/$KEY_ID\" \\\n  -H \"Authorization: $VH_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d @- <<EOF\n{\n  \"isEnabled\": { \"value\": false }\n}\nEOF",
+      "response": null
+    }
+  ]
+}

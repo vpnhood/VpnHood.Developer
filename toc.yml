@@ -10,3 +10,6 @@
 - name: API reference
   href: api/
   topicHref: api/index.md
+- name: MANAGER API
+  href: manager-api/
+  topicHref: manager-api/index.md

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 300" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" role="img" aria-label="A billing system's bot creates an access key with one request to the MANAGER API, and an app connects with it to the project's servers">
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8f6ff"/><stop offset="1" stop-color="#e8e0ff"/></linearGradient>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a6dff"/><stop offset="1" stop-color="#4a25c9"/></linearGradient>
+    <linearGradient id="deep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2190"/><stop offset="1" stop-color="#1c0f45"/></linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4af0d2"/><stop offset="1" stop-color="#119e87"/></linearGradient>
+    <linearGradient id="tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f3ff"/><stop offset="1" stop-color="#d9ceff"/></linearGradient>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#c4b6ff" opacity="0.5"/></pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#2a1660" flood-opacity="0.2"/></filter>
+    <filter id="spot" x="-60%" y="-60%" width="220%" height="240%"><feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#2a1660" flood-opacity="0.22"/></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b5cff"/></marker>
+  </defs>
+  <rect x="2" y="2" width="596" height="296" rx="24" fill="url(#backdrop)"/>
+  <rect x="2" y="2" width="596" height="296" rx="24" fill="url(#dots)"/>
+  <rect x="34" y="18" width="150" height="32" rx="16" fill="#fff" stroke="#e0d8ff" stroke-width="2" filter="url(#spot)"/>
+  <path d="M57.0 22.04 V27" stroke="#5b37e6" stroke-width="1.98" stroke-linecap="round"/><circle cx="57.0" cy="20.96" r="2.16" fill="#4af0d2"/>
+  <rect x="48" y="26" width="18" height="14.4" rx="4.32" fill="url(#purple)"/><circle cx="53.76" cy="32.84" r="1.8" fill="#fff"/><circle cx="60.24" cy="32.84" r="1.8" fill="#fff"/>
+  <text x="74" y="39" font-size="14" font-weight="700" fill="#1f1640" text-anchor="start">billing-bot</text>
+  <rect x="34" y="60" width="300" height="112" rx="14" fill="url(#deep)" filter="url(#shadow)"/>
+  <text x="52" y="92" font-size="17" font-weight="600" fill="#4af0d2" text-anchor="start" font-family="Consolas, 'Cascadia Mono', monospace">POST /access-tokens</text>
+  <text x="52" y="120" font-size="15" font-weight="600" fill="#c9bcff" text-anchor="start" font-family="Consolas, 'Cascadia Mono', monospace">{ "customerId": "1001" }</text>
+  <rect x="52" y="136" width="88" height="24" rx="12" fill="url(#teal)"/>
+  <text x="96" y="153" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">200 OK</text>
+  <path d="M184 178 C 184 214, 206 236, 248 236" fill="none" stroke="#7b5cff" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <rect x="254" y="210" width="196" height="52" rx="26" fill="#fff" stroke="#e0d8ff" stroke-width="2" filter="url(#shadow)"/>
+  <g transform="translate(286 236) scale(1.1) translate(-286 -236)">
+  <circle cx="279" cy="236" r="6.5" fill="none" stroke="#5b37e6" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M286 236 H299 M295 236 v5 M299 236 v4" fill="none" stroke="#5b37e6" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="310" y="242" font-size="17" font-weight="700" fill="#5b37e6" text-anchor="start" font-family="Consolas, 'Cascadia Mono', monospace">vh:eyJ2Ijo0…</text>
+  <path d="M456 236 H484" fill="none" stroke="#7b5cff" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <rect x="492" y="186" width="58" height="100" rx="10" fill="url(#deep)" filter="url(#shadow)"/><rect x="497" y="194" width="48" height="84" rx="5" fill="#2b1870"/>
+  <circle cx="521.0" cy="228.0" r="12.76" fill="none" stroke="url(#teal)" stroke-width="3.4"/>  <path d="M516.78 228.0 l3.7120000000000006 3.7120000000000006 l6.728000000000001 -7.192000000000001" fill="none" stroke="#4af0d2" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="406" y="26" width="160" height="104" rx="14" fill="url(#purple)" filter="url(#shadow)"/>
+  <text x="422" y="50" font-size="14" font-weight="800" fill="#fff" text-anchor="start">your servers</text>
+  <rect x="422" y="62" width="128" height="13" rx="3.5" fill="#fff" fill-opacity="0.22"/><circle cx="429" cy="68.5" r="2.3" fill="#4af0d2"/><rect x="436" y="66.5" width="106" height="4" rx="2" fill="#e3dbff"/>
+  <rect x="422" y="82" width="128" height="13" rx="3.5" fill="#fff" fill-opacity="0.22"/><circle cx="429" cy="88.5" r="2.3" fill="#4af0d2"/><rect x="436" y="86.5" width="106" height="4" rx="2" fill="#e3dbff"/>
+  <rect x="422" y="102" width="128" height="13" rx="3.5" fill="#fff" fill-opacity="0.22"/><circle cx="429" cy="108.5" r="2.3" fill="#4af0d2"/><rect x="436" y="106.5" width="106" height="4" rx="2" fill="#e3dbff"/>
+  <path d="M521 182 C 521 160, 500 150, 490 136" fill="none" stroke="url(#teal)" stroke-width="3.4" stroke-dasharray="7 6" stroke-linecap="round" marker-end="url(#arrow)"/>
+</svg>
