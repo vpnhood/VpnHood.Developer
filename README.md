@@ -15,12 +15,16 @@ VpnHood! MANAGER API, whose repository is private.
 - **API reference:** the doc comments of every package whose project sets `VhApiDocsComplete`, the gate that fails
   its build on a missing comment, plus VpnHood.Net.Proxies from its own repo.
 - **MANAGER API:** `manager-api/`. Its guide, `index.md`, is written here; each `<!-- example: name -->` in it becomes
-  a request and its answer from `examples.json`. The reference, `reference.md`, shows `openapi.json` with
+  a request and its answer from `examples.json`. The reference, `reference.md`, shows the API's description with
   [Scalar](https://github.com/scalar/scalar), whose bundle `build.ps1` fetches at a pinned version and checks against
   its hash, so the site serves it itself; `reference.js` turns off everything of Scalar's that would reach a third
-  party. `openapi.json` and `examples.json` are copies of what the MANAGER's tests make: after a change to its API, run
-  `pwsh ./tools/update-manager-api.ps1` beside a clone of VpnHood.Manager. It copies nothing unless the tests pass: one
-  fails when a name of the API has no description, the other makes the guide's requests as a bot.
+  party. The description is the live MANAGER's own, which each build reads from
+  `https://api.vpnhood.com/openapi/v1.json`, so a release needs no one to copy it; `openapi.json` here is used instead
+  only when it is newer, for a change documented before its release. `examples.json` is the MANAGER's `ApiGuideTest`'s
+  requests and answers: after a change to that test, which reminds you when it fails, run
+  `pwsh ./tools/update-manager-api.ps1` beside a clone of VpnHood.Manager. It makes both copies from the MANAGER's
+  tests and copies nothing unless they pass: one fails when a name of the API has no description, the other makes the
+  guide's requests as a bot.
 - **For AI tools:** after the build, `llms.txt` indexes the guides, samples, libraries and the MANAGER API
   ([llmstxt.org](https://llmstxt.org)), each page has a Markdown copy at its address with `.md`, and `llms-full.txt`
   holds them all in one file.
@@ -32,15 +36,18 @@ made-up brand, never one of VpnHood's own apps.
 
 ## When it builds
 
-`.github/workflows/build.yml` builds the site from VpnHood's `develop`:
+`.github/workflows/build.yml` builds the site from VpnHood's `develop` and the live MANAGER's API description:
 
 - on every push to this repo's `main`;
 - after every release: VpnHood's release scripts (`pub/*/PublishByGithub.ps1`) start it with the releaser's own
-  GitHub login once the release has bumped VpnHood's version, so VpnHood holds no credential for this repo;
+  GitHub login once the release has bumped VpnHood's version, so VpnHood holds no credential for this repo; the
+  MANAGER's production publish (`_publish_production.ps1`) starts it the same way, but only when the API it published
+  differs from the one this site shows;
 - by hand, from the Actions tab, for any branch, tag or commit of VpnHood.
 
 Each run publishes the site to GitHub Pages, at developer.vpnhood.com: the domain is this repo's Pages setting, and
-its DNS a CNAME to `vpnhood.github.io` at Cloudflare, proxied as www.vpnhood.com's is.
+its DNS a CNAME to `vpnhood.github.io` at Cloudflare, proxied as www.vpnhood.com's is. A run that fails publishes
+nothing, so the site stays as it was.
 
 ## Build it locally
 

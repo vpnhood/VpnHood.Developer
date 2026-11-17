@@ -3,7 +3,7 @@
   "info": {
     "title": "VpnHood! MANAGER",
     "description": "The REST API of VpnHood! MANAGER, the panel that runs VPN servers and gives out the access keys people connect with.\nThe panel is built on this API, so a script or a service can do anything it does: give access keys to your customers,\nadd and install servers, and read their usage. Every path is under `https://api.vpnhood.com`.\n\nThe guide [Call the MANAGER API](https://developer.vpnhood.com/manager-api/) goes from a key to a first request.\n\n## Sign in with a bot's API key\n\nA script signs in as a bot: a member of your project's team, with a role and an API key.\n\n1. In the panel, open **Settings**, select **Team**, then **Add Bot**, and name the bot.\n2. The panel shows the bot's key once, as the value of an `Authorization` header. Copy it.\n3. The bot joins as `ProjectReader`, which only reads. Open its page and give it the role its work needs:\n   `AccessTokenWriter` to give out access keys, `ProjectWriter` to manage servers too.\n\nSend the key with every request:\n\n```http\nAuthorization: Bearer <the bot's key>\n```\n\nEach operation says which permission it needs and which roles have it. A request without a valid key gets `401`, and\none whose role lacks the permission gets `403`. If a key leaks, reset it on the bot's page: the old one stops working\nat once.\n\n## Ids, lists and changes\n\n- `projectId` is the id in your project's address in the panel:\n  `https://console.vpnhood.com/projects/{projectId}/overview`. The other ids are the ones the API returns.\n- A list takes `recordIndex`, the first item to return, and `recordCount`, how many to return.\n- An update (`PATCH`) takes only the fields to change, each as `{ \"value\": ... }`. A field left out keeps its value.\n- Times are in UTC, in ISO 8601.\n\n## Errors\n\nAn error has a status code and a JSON body, whose `TypeName` names the error and `Message` says what went wrong:\n\n```json\n{ \"TypeName\": \"NotExistsException\", \"Message\": \"...\" }\n```\n\n`404` means not found, `409` already exists, and `400` any other request the API refuses.",
-    "version": "4.0.465"
+    "version": "4.0.466"
   },
   "servers": [
     {
@@ -7379,7 +7379,8 @@
           "None",
           "Flexible",
           "Rewarded"
-        ]
+        ],
+        "description": "Specifies the ad a session requires before it carries traffic.\n\n- `None`: No ad.\n- `Flexible`: An ad if the app can show one; a failure to show it does not end the session.\n- `Rewarded`: A rewarded ad, which the user must watch to the end."
       },
       "ApiKey": {
         "required": [
@@ -8686,12 +8687,15 @@
         "properties": {
           "baseUrl": {
             "type": "string",
+            "description": "Gets or sets the access manager's address, of which its scheme, host and port are used.",
             "format": "uri"
           },
           "authorization": {
-            "type": "string"
+            "type": "string",
+            "description": "Gets or sets the value of the Authorization header, as a scheme and its credentials; one that does not parse is\nnot sent."
           }
-        }
+        },
+        "description": "Represents where an HTTP access manager is, and how the server proves itself to it."
       },
       "IPAddress": {
         "examples": [
@@ -10577,6 +10581,7 @@
               "integer",
               "string"
             ],
+            "description": "Gets the amount sent.",
             "format": "int64"
           },
           "received": {
@@ -10585,9 +10590,11 @@
               "integer",
               "string"
             ],
+            "description": "Gets the amount received.",
             "format": "int64"
           }
-        }
+        },
+        "description": "Represents an amount each way: bytes, or a rate where a member says so."
       },
       "TrafficUsage": {
         "type": "object",

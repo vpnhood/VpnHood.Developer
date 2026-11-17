@@ -1,8 +1,9 @@
 name: Build
 
-# Builds developer.vpnhood.com from VpnHood's develop with build.ps1 (README.md explains it) and publishes it to GitHub
-# Pages: on a push here, after a release, when VpnHood's release scripts (pub/*/PublishByGithub.ps1) start it, and by
-# hand from the Actions tab.
+# Builds developer.vpnhood.com from VpnHood's develop and the live MANAGER's API description with build.ps1 (README.md
+# explains it) and publishes it to GitHub Pages: on a push here, after a release, when VpnHood's release scripts
+# (pub/*/PublishByGithub.ps1) start it, when a MANAGER production publish changed the API, and by hand from the Actions
+# tab.
 
 on:
   push:

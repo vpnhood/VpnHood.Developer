@@ -3,11 +3,12 @@
 Refreshes the site's copies of the VpnHood! MANAGER API: its description and the guide's requests with their answers.
 
 .DESCRIPTION
-The MANAGER's repository is private, so the site keeps copies of what it shows: manager-api/openapi.json, the API's
-description, the one the MANAGER's /scalar shows, and manager-api/examples.json, the requests the guide shows with the
-answers they got. Both come from the MANAGER's tests, which run the MANAGER in-process (Docker runs their databases):
-ApiDescriptionTest fails when a name has no description, and ApiGuideTest makes the guide's requests as a bot. Nothing
-is copied unless both pass. Run it after a change to the MANAGER's API, as part of that change's docs.
+The MANAGER's repository is private, so the site keeps copies of what it shows: manager-api/examples.json, the requests
+the guide shows with the answers they got, and manager-api/openapi.json, the API's description, which the build uses
+only when it is newer than the live MANAGER's. Both come from the MANAGER's tests, which run the MANAGER in-process
+(Docker runs their databases): ApiDescriptionTest fails when a name has no description, and ApiGuideTest makes the
+guide's requests as a bot. Nothing is copied unless both pass. Run it after a change to ApiGuideTest, which reminds
+you when it fails, or to show an API change on the site before its release.
 
 .EXAMPLE
 pwsh ./tools/update-manager-api.ps1

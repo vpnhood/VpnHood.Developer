@@ -698,10 +698,10 @@ foreach ($category in $categories) {
 }
 Write-Text (Join-Path $api "index.md") (($apiFront -join "`n") + "`n")
 
-# --- the MANAGER API (the MANAGER plan's task 38, owner, 2026-11-16: "do all of the other recommendation"): its guide,
-# its reference and its description. The MANAGER's repository is private, so this repository keeps what the site shows
-# of it: the guide's text, and copies of the API's description and of the guide's requests with their answers, which the
-# MANAGER's tests make (tools/update-manager-api.ps1). Each example in the guide is a test's request, never hand-written.
+# --- the MANAGER API: its guide, its reference and its description. The MANAGER's repository is private, so this
+# repository keeps the guide's text and copies of what the MANAGER's tests make (tools/update-manager-api.ps1): the API's
+# description and the guide's requests with their answers. Each example in the guide is a test's request, never
+# hand-written.
 $managerSource = Join-Path $PSScriptRoot "manager-api"
 $managerDir = Join-Path $WorkDir "manager-api"
 $managerExamples = (Get-Content (Join-Path $managerSource "examples.json") -Raw | ConvertFrom-Json).examples
@@ -721,7 +721,28 @@ $managerGuide = Add-Steps $managerGuide @(
 ) "manager-api/index.md"
 # no API links: its code names are the REST API's, not the .NET packages'
 Write-Text (Join-Path $managerDir "index.md") $managerGuide
-foreach ($file in "reference.md", "reference.js", "toc.yml", "openapi.json") { Copy-Item (Join-Path $managerSource $file) $managerDir }
+foreach ($file in "reference.md", "reference.js", "toc.yml") { Copy-Item (Join-Path $managerSource $file) $managerDir }
+
+# The reference is the live MANAGER's own description, so an API change reaches the site with no one copying it: a
+# MANAGER release that changed the API starts this build. The copy here wins only when it is newer, as for a change
+# documented before its release. A description that can't be read stops the build, so the site stays as it was.
+function Read-LiveManagerDescription {
+    foreach ($attempt in 1..3) {
+        try { return (Invoke-WebRequest "https://api.vpnhood.com/openapi/v1.json" -TimeoutSec 60).Content | ConvertFrom-Json -AsHashtable }
+        catch {
+            if ($attempt -eq 3) { throw "The live MANAGER's API description could not be read: $_" }
+            Start-Sleep -Seconds 20
+        }
+    }
+}
+$managerCopy = Read-Text (Join-Path $managerSource "openapi.json") | ConvertFrom-Json -AsHashtable
+$managerLive = Read-LiveManagerDescription
+$managerUsesLive = [version]$managerLive["info"]["version"] -ge [version]$managerCopy["info"]["version"]
+$managerDescription = if ($managerUsesLive) { $managerLive } else { $managerCopy }
+$managerDescription["servers"] = @([ordered]@{ url = "https://api.vpnhood.com" })
+Write-Text (Join-Path $managerDir "openapi.json") (($managerDescription | ConvertTo-Json -Depth 100) + "`n")
+Write-Host ("MANAGER API: the {0} description, {1}; the live one is {2}" -f
+    ($managerUsesLive ? "live" : "repository's"), $managerDescription["info"]["version"], $managerLive["info"]["version"])
 
 # Scalar shows the reference: its browser bundle, at a pinned version, checked against its hash and served from this
 # site, so a reader's browser asks no one else for it. To move to another version, set both and check reference.js's
