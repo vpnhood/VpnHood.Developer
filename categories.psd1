@@ -168,10 +168,10 @@
                    Text = 'Put the client''s tunnel inside a proxy: one proxy, or a managed list that rates and rotates them.'
                    Intro = 'A VpnHood client can optionally put its tunnel inside a proxy: it reaches its server through a SOCKS4, SOCKS5 or HTTP(S) proxy instead of going straight to it. The proxy only relays the encrypted tunnel and cannot see inside. These packages give the client one proxy, or a managed list of endpoints that are rated and rotated, kept in a store and updated from a URL.'
                    Diagram = @{ Title = 'What goes through the proxy'; Image = 'images/diagram-proxy-tunnels.svg'
-                       ImageAlt = 'The client''s TCP connections reach its server each through a proxy, while UDP and QUIC go straight to the server'
+                       ImageAlt = 'The client''s TCP connections reach its server each through a proxy; UDP and QUIC are off while a proxy is on'
                        Text = @(
                            'Every TCP connection the client makes to its server goes through a proxy: its requests and the TCP channels of its tunnel. Each connection can take a different proxy of the list.'
-                           'The UDP channel and QUIC go straight to the server''s address, not through a proxy. When the server can be reached only through a proxy, keep the tunnel on TCP, the default.') }
+                           'While the client has a proxy connector, its tunnel takes TCP alone, whatever channel protocol it asks for: UDP and QUIC would reach the server''s address straight, around the proxies. The session''s SessionInfo.ChannelProtocols then holds TCP alone.') }
                    Use = @(
                        'A network blocks your server''s address: the client puts its tunnel inside a proxy and reaches the server through it.'
                        'You keep a list of proxies up to date from a URL, and the client uses the best of them.')
