@@ -170,7 +170,7 @@
                    Diagram = @{ Title = 'What goes through the proxy'; Image = 'images/diagram-proxy-tunnels.svg'
                        ImageAlt = 'The client''s TCP connections reach its server each through a proxy; UDP and QUIC are off while a proxy is on'
                        Text = @(
-                           'Every TCP connection the client makes to its server goes through a proxy: its requests and the TCP channels of its tunnel. Each connection can take a different proxy of the list.'
+                           'Every TCP connection the client makes to its server goes through a proxy: its requests and the TCP channels of its tunnel. Each connection can take a different proxy of the list. While a managed list has no proxy to use, the connect waits for the list''s first download, and fails where none comes: it never goes straight to the server.'
                            'While the client has a proxy connector, its tunnel takes TCP alone, whatever channel protocol it asks for: UDP and QUIC would reach the server''s address straight, around the proxies. The session''s SessionInfo.ChannelProtocols then holds TCP alone.') }
                    Use = @(
                        'A network blocks your server''s address: the client puts its tunnel inside a proxy and reaches the server through it.'
