@@ -17,7 +17,7 @@
   <rect x="48" y="26" width="18" height="14.4" rx="4.32" fill="url(#purple)"/><circle cx="53.76" cy="32.84" r="1.8" fill="#fff"/><circle cx="60.24" cy="32.84" r="1.8" fill="#fff"/>
   <text x="74" y="39" font-size="14" font-weight="700" fill="#1f1640" text-anchor="start">billing-bot</text>
   <rect x="34" y="60" width="300" height="112" rx="14" fill="url(#deep)" filter="url(#shadow)"/>
-  <text x="52" y="92" font-size="17" font-weight="600" fill="#4af0d2" text-anchor="start" font-family="Consolas, 'Cascadia Mono', monospace">POST /access-tokens</text>
+  <text x="52" y="92" font-size="17" font-weight="600" fill="#4af0d2" text-anchor="start" font-family="Consolas, 'Cascadia Mono', monospace">POST /access-keys</text>
   <text x="52" y="120" font-size="15" font-weight="600" fill="#c9bcff" text-anchor="start" font-family="Consolas, 'Cascadia Mono', monospace">{ "customerId": "1001" }</text>
   <rect x="52" y="136" width="88" height="24" rx="12" fill="url(#teal)"/>
   <text x="96" y="153" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">200 OK</text>
