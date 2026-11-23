@@ -28,7 +28,7 @@ Remove-Item $description, $examples -ErrorAction SilentlyContinue
 $env:VH_MANAGER_API_DESCRIPTION = $description
 $env:VH_MANAGER_API_EXAMPLES = $examples
 try {
-    dotnet test (Join-Path $ManagerRoot "VpnHood.Manager.Test/VpnHood.Manager.Test.csproj") `
+    dotnet test (Join-Path $ManagerRoot "tests/VpnHood.Manager.Test/VpnHood.Manager.Test.csproj") `
         --filter "FullyQualifiedName~ApiDescriptionTest|FullyQualifiedName~ApiGuideTest"
     if ($LASTEXITCODE) { throw "The MANAGER's API tests failed, so nothing is copied." }
 }
