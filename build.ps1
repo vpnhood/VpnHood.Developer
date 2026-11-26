@@ -100,6 +100,10 @@ $articles = @(
             # suspend"; "make sure their policy accept vpn"; "these are important, also add image for them"
             @{ Heading = "Ads through the VPN"; Art = "images/diagram-ad-over-vpn.svg"
                 Alt = "Three people's ads go through the VPN server, so the ad network sees the server's one address for every view and click, as if the app's owner clicked their own ads, and suspends the account" }
+            # owner, 2026-11-25: "one of the benefits of internal ad provider is that remove user tendency to block any
+            # ads"; "it needs a section for itself. Or maybe an image"
+            @{ Heading = "The app's own ad"; Art = "images/diagram-own-ad.svg"
+                Alt = "The networks' ads, blocked or with no ad to give, give way to the app's own ad, which always shows, with its countdown, a Close button and a Learn more button" }
             @{ Heading = "Adding an ad network"; Art = "images/diagram-ad-network-check.svg"
                 Alt = "Before adding an ad network, read its publisher policy on VPN apps: where it accepts them, the network joins the app's AdMob, Chartboost and InMobi; where it does not, don't add it" }) }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
