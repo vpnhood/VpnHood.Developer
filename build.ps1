@@ -110,13 +110,6 @@ $articles = @(
                 Alt = "At Connect, a choice between a short free connection and a longer one for a rewarded ad; in the session, a rewarded ad the person asks for adds time" }
             @{ Heading = "Adding an ad network"; Art = "images/diagram-ad-network-check.svg"
                 Alt = "Before adding an ad network, read its publisher policy on VPN apps: where it accepts them, the network joins the app's AdMob, Chartboost and InMobi; where it does not, don't add it" }) }
-    # what a person is offered at a location: product documentation, so on the site, not left on GitHub (owner,
-    # 2026-11-25: "do it and improve it by image")
-    [pscustomobject]@{ File = "connection-options.md"; Title = "Connection options in a VpnHood app"
-        Description = "The ways a VpnHood app offers a server location: free, free for a rewarded ad, a premium trial, premium for an ad, bought or with a code; what decides them, how long each lasts, and when the app asks."
-        Figures = @(
-            @{ Heading = "When the app asks"; Art = "images/diagram-connect-options.svg"
-                Alt = "What decides a location's options: the person's country, by its client policy, the location, and the app; where a trial or a rewarded ad is offered, the app asks: a free server, a free server for an ad, premium for an ad, a premium trial, or premium bought; a premium key connects at once" }) }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
         Description = "A VpnHood app is a head over five layers - the UI, its host, the app's logic, the VPN engine and networking - which meet at two contracts; which part to use for what you build." }
     [pscustomobject]@{ File = "vpn-engine.md"; Title = "How the VPN engine works"
