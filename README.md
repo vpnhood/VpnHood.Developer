@@ -95,3 +95,11 @@ step illustrations. The master, `build-your-app-casting-soft-forearms.png`, and 
 Run `python tools/export-casting-hero.py PATH_TO_MASTER.png` (Pillow required) to export the desktop and small WebP
 images. Keep the master unchanged; the exporter only resizes and compresses it. The page shows the complete scene
 at every width so both workers, the pour, and the mold stay visible.
+
+## Ads article artwork
+
+How ads work in a VpnHood app shows a city gate at night in its banner: a traveller looks at a painted poster, the
+hooded guardian holds the gate open, and the other guardian turns an hourglass. Its master, `ads-gate-2-slim-leonardo.jpg`,
+was made in Leonardo at its widest, 21:9, and is kept outside this repository with its prompt.
+Run `python tools/export-ads-hero.py PATH_TO_MASTER.jpg` (Pillow required) to export the desktop and small WebP
+images: it crops the master to the banner's 3:1, keeping the lantern above the poster, then resizes and compresses it.

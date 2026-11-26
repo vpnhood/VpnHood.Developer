@@ -52,8 +52,8 @@ $excluded = @("VpnHood.Net.Http3")
 
 # the hand-written pages, in reading order: files of docs/, never a glob. A page's Hero is a picture of images/ that the
 # site shows in the page's banner with its title, as the home page shows the forge; its Steps are a picture for each item
-# of its first numbered list, which the site shows as steps. The page on GitHub goes without them, so VpnHood keeps no
-# pictures for the site.
+# of its first numbered list, which the site shows as steps; its Figures a drawing at the column's width after a
+# section's first paragraph. The page on GitHub goes without them, so VpnHood keeps no pictures for the site.
 $articles = @(
     [pscustomobject]@{ File = "build-your-app.md"; Title = "Build your VPN app"
         Description = "Build your own VPN app for Android, iOS, Windows and Linux from VpnHood.App.Template, on VpnHood's NuGet packages."
@@ -83,6 +83,25 @@ $articles = @(
         Description = "How a head starts a VpnHood app: who the app is, its options with its store's providers, and what the host builds from them on Android, iOS, Windows and Linux." }
     [pscustomobject]@{ File = "connect.md"; Title = "What happens on Connect"
         Description = "What a VPN app does from a tap on Connect to Connected: finding a server, the hello, the ad and the adapter; what the app shows meanwhile, and why a connect fails." }
+    # the ad's step for the business, with no code (owner, 2026-11-23: "show how our ad system work on developer. not
+    # how code work, in business pov"; 2026-11-25: "lets go", to its own page, one session's story and one drawing)
+    [pscustomobject]@{ File = "ads.md"; Title = "How ads work in a VpnHood app"
+        Description = "How ads pay for a VpnHood app's free servers: the server's side decides when a session needs an ad and what it earns, the app which ads it shows, and where an ad loads: before the VPN, beside it, or through it; and which ad networks accept a VPN app."
+        # the guardians at a city gate at night: a traveller looks at a painted poster, the woman holds the gate open, the
+        # man turns an hourglass (owner, 2026-11-25: "use leonardo and create a big hero page for ads"); the gate's
+        # dark wall is about the scene's left quarter
+        Hero = @{ Image = "images/hero-ads.webp"; Small = "images/hero-ads-small.webp"; Width = 2160; Height = 720
+            Alt = "At a city gate at night, a traveller looks at a painted poster by a lantern, a hooded woman holds the gate open, and a man turns an hourglass"
+            Ratio = "3 / 1"; Focus = "center"; Clear = "0.27" }
+        Figures = @(
+            @{ Heading = "Where the ad loads"; Art = "images/diagram-ad-routes.svg"
+                Alt = "A connect's ad is tried in three ways: before the VPN, on the device's own network; beside the VPN, its traffic going around the tunnel; and through the VPN, by the VPN server, for the networks that serve VPN users" }
+            # owner, 2026-11-25: "if they use over vpn, the ad quality may degrade, and also their ad account may
+            # suspend"; "make sure their policy accept vpn"; "these are important, also add image for them"
+            @{ Heading = "Ads through the VPN"; Art = "images/diagram-ad-over-vpn.svg"
+                Alt = "Three people's ads go through the VPN server, so the ad network sees the server's one address for every view and click, as if the app's owner clicked their own ads, and suspends the account" }
+            @{ Heading = "Adding an ad network"; Art = "images/diagram-ad-network-check.svg"
+                Alt = "Before adding an ad network, read its publisher policy on VPN apps: where it accepts them, the network joins the app's AdMob, Chartboost and InMobi; where it does not, don't add it" }) }
     [pscustomobject]@{ File = "client-architecture.md"; Title = "VpnHood Client Architecture"
         Description = "A VpnHood app is a head over five layers - the UI, its host, the app's logic, the VPN engine and networking - which meet at two contracts; which part to use for what you build." }
     [pscustomobject]@{ File = "vpn-engine.md"; Title = "How the VPN engine works"
@@ -484,6 +503,15 @@ foreach ($article in $articles) {
         if ($end -lt 0) { $end = $text.Length }
         $picture = "<a href=""$($beside.Href)""><img class=""vh-step-art"" src=""../$($beside.Art)"" alt=""$(ConvertTo-Html $beside.Alt)""></a> "
         $text = $text.Insert($end, "`n`n</div>").Insert($start, "<div class=""vh-beside"">`n`n$picture")
+    }
+    foreach ($figure in $article.Figures) {
+        $text = $text -replace "\r\n", "`n"
+        $heading = [regex]::Match($text, "(?m)^## $([regex]::Escape($figure.Heading))\n\n")
+        if (-not $heading.Success) { throw "docs/$($article.File) has no section '$($figure.Heading)' for its drawing" }
+        $end = $text.IndexOf("`n`n", $heading.Index + $heading.Length)
+        if ($end -lt 0) { $end = $text.Length }
+        $drawing = "<p class=""vh-figure""><img src=""../$($figure.Art)"" alt=""$(ConvertTo-Html $figure.Alt)""></p>"
+        $text = $text.Insert($end, "`n`n$drawing")
     }
     Write-Text (Join-Path $WorkDir "articles/$($article.File)") ((ConvertTo-FrontMatter $front) + $text)
     $articleToc.Add("- name: $($article.Title)"); $articleToc.Add("  href: $($article.File)")

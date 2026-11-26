@@ -355,6 +355,19 @@
   height: auto;
 }
 
+/* a guide's drawing at the column's width (build.ps1's Figures), as the ads page's three ways an ad loads: wider than a
+   group's, as it holds three scenes */
+.vh-figure {
+  margin: 0.5rem 0 1.25rem;
+}
+
+.vh-figure img {
+  display: block;
+  width: 100%;
+  max-width: 43rem;
+  height: auto;
+}
+
 /* Microsoft Learn's colours, as its theme variables give them (owner, 2026-11-15: "Use the color that Microsoft uses in
    their doc"): the page, its text, subtle text, links, borders, panels, and inline code on a grey of its own. In dark
    mode the text keeps Bootstrap's softer grey, as Learn's white was too bright on the page (owner: "our text is much
