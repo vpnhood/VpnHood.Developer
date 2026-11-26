@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 690 324" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" role="img" aria-label="Three people's ads go through the VPN server, so the ad network sees the server's one address for every view and click, as if the app's owner clicked their own ads, and suspends the account">
+  <defs>
+    <linearGradient id="backdrop" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f8f6ff"/><stop offset="1" stop-color="#e8e0ff"/></linearGradient>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a6dff"/><stop offset="1" stop-color="#4a25c9"/></linearGradient>
+    <linearGradient id="deep" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2190"/><stop offset="1" stop-color="#1c0f45"/></linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4af0d2"/><stop offset="1" stop-color="#119e87"/></linearGradient>
+    <linearGradient id="tube" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6f3ff"/><stop offset="1" stop-color="#d9ceff"/></linearGradient>
+    <pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" fill="#c4b6ff" opacity="0.5"/></pattern>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#2a1660" flood-opacity="0.2"/></filter>
+    <filter id="spot" x="-60%" y="-60%" width="220%" height="240%"><feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="#2a1660" flood-opacity="0.22"/></filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7b5cff"/></marker>
+  </defs>
+  <rect x="2" y="2" width="686" height="320" rx="24" fill="url(#backdrop)"/>
+  <rect x="2" y="2" width="686" height="320" rx="24" fill="url(#dots)"/>
+  <rect x="34" y="33" width="42" height="58" rx="9" fill="url(#deep)" filter="url(#shadow)"/><rect x="38" y="39" width="34" height="46" rx="4" fill="#2b1870"/>
+  <rect x="42" y="45" width="26" height="28" rx="3" fill="url(#teal)"/><path d="M51.0 52 v14 l11 -7 z" fill="#fff"/>
+  <rect x="42" y="77" width="20" height="4" rx="2" fill="#8a6dff"/>
+  <path d="M80 62 C 150 62, 170 106.85, 238 106.85" fill="none" stroke="#7b5cff" stroke-width="3" stroke-linecap="round" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+  <rect x="34" y="102" width="42" height="58" rx="9" fill="url(#deep)" filter="url(#shadow)"/><rect x="38" y="108" width="34" height="46" rx="4" fill="#2b1870"/>
+  <rect x="42" y="114" width="26" height="28" rx="3" fill="url(#teal)"/><path d="M51.0 121 v14 l11 -7 z" fill="#fff"/>
+  <rect x="42" y="146" width="20" height="4" rx="2" fill="#8a6dff"/>
+  <path d="M80 131 C 150 131, 170 131.0, 238 131.0" fill="none" stroke="#7b5cff" stroke-width="3" stroke-linecap="round" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+  <rect x="34" y="171" width="42" height="58" rx="9" fill="url(#deep)" filter="url(#shadow)"/><rect x="38" y="177" width="34" height="46" rx="4" fill="#2b1870"/>
+  <rect x="42" y="183" width="26" height="28" rx="3" fill="url(#teal)"/><path d="M51.0 190 v14 l11 -7 z" fill="#fff"/>
+  <rect x="42" y="215" width="20" height="4" rx="2" fill="#8a6dff"/>
+  <path d="M80 200 C 150 200, 170 155.15, 238 155.15" fill="none" stroke="#7b5cff" stroke-width="3" stroke-linecap="round" stroke-dasharray="7 6" marker-end="url(#arrow)"/>
+  <text x="55" y="258" font-size="15" font-weight="600" fill="#1f1640" text-anchor="middle">your users</text>
+  <rect x="246" y="76" width="128" height="110" rx="14" fill="url(#purple)" filter="url(#shadow)"/>
+  <text x="310" y="101" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">VPN server</text>
+  <rect x="262" y="114" width="96" height="13" rx="3.5" fill="#fff" fill-opacity="0.22"/><circle cx="269" cy="120.5" r="2.3" fill="#4af0d2"/><rect x="276" y="118.5" width="74" height="4" rx="2" fill="#e3dbff"/>
+  <rect x="262" y="134" width="96" height="13" rx="3.5" fill="#fff" fill-opacity="0.22"/><circle cx="269" cy="140.5" r="2.3" fill="#4af0d2"/><rect x="276" y="138.5" width="74" height="4" rx="2" fill="#e3dbff"/>
+  <rect x="262" y="154" width="96" height="13" rx="3.5" fill="#fff" fill-opacity="0.22"/><circle cx="269" cy="160.5" r="2.3" fill="#4af0d2"/><rect x="276" y="158.5" width="74" height="4" rx="2" fill="#e3dbff"/>
+  <rect x="250" y="198" width="120" height="28" rx="14" fill="#fff" stroke="#e0d8ff" stroke-width="2" filter="url(#spot)"/>
+  <text x="310" y="217" font-size="13" font-weight="700" fill="#5b37e6" text-anchor="middle" font-family="Consolas, 'Cascadia Mono', monospace">203.0.113.7</text>
+  <text x="310" y="250" font-size="13" font-weight="600" fill="#5d5584" text-anchor="middle">one address,</text>
+  <text x="310" y="267" font-size="13" font-weight="600" fill="#5d5584" text-anchor="middle">in a data center</text>
+  <path d="M380 131 H448" fill="none" stroke="#7b5cff" stroke-width="3.5" stroke-linecap="round" marker-end="url(#arrow)"/>
+  <rect x="386" y="119" width="12" height="8" rx="4" fill="url(#teal)"/>
+  <rect x="402" y="119" width="12" height="8" rx="4" fill="url(#teal)"/>
+  <rect x="418" y="119" width="12" height="8" rx="4" fill="url(#teal)"/>
+  <rect x="456" y="36" width="212" height="160" rx="16" fill="url(#teal)" filter="url(#shadow)"/>
+  <text x="562" y="62" font-size="15" font-weight="800" fill="#fff" text-anchor="middle">ad network</text>
+  <rect x="468" y="76" width="188" height="108" rx="10" fill="#fff"/>
+  <text x="480" y="104" font-size="13" font-weight="600" fill="#1f1640" text-anchor="start" font-family="Consolas, 'Cascadia Mono', monospace">203.0.113.7</text>
+  <text x="644" y="104" font-size="13" font-weight="700" fill="#5b37e6" text-anchor="end">view</text>
+  <text x="480" y="132" font-size="13" font-weight="600" fill="#1f1640" text-anchor="start" font-family="Consolas, 'Cascadia Mono', monospace">203.0.113.7</text>
+  <text x="644" y="132" font-size="13" font-weight="700" fill="#5b37e6" text-anchor="end">click</text>
+  <text x="480" y="160" font-size="13" font-weight="600" fill="#1f1640" text-anchor="start" font-family="Consolas, 'Cascadia Mono', monospace">203.0.113.7</text>
+  <text x="644" y="160" font-size="13" font-weight="700" fill="#5b37e6" text-anchor="end">click</text>
+  <rect x="468" y="206" width="188" height="34" rx="17" fill="#e5484d" filter="url(#shadow)"/>
+  <circle cx="488" cy="223" r="10" fill="#fff"/>  <text x="488" y="228" font-size="15" font-weight="900" fill="#e5484d" text-anchor="middle">!</text>
+  <text x="574" y="228" font-size="14" font-weight="800" fill="#fff" text-anchor="middle">account suspended</text>
+  <text x="562" y="262" font-size="13" font-weight="600" fill="#5d5584" text-anchor="middle">or its earnings held back</text>
+  <text x="345" y="302" font-size="15" font-weight="600" fill="#5d5584" text-anchor="middle">One address for everyone's ads looks like you clicking your own.</text>
+</svg>
